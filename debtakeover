@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.41 2003/11/01 23:03:22 guillem Exp $
+# $Id: debtakeover,v 1.42 2003/11/02 00:23:32 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -165,7 +165,7 @@ debian_tarball()
   echo "-> Debootstrapping"
   $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
-        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian | logpipe
+        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
 
   echo "-> Removing unneeded files"
   rm -f $DEBIAN_DIR/var/lib/apt/lists/*_{Sources,Packages,Release}
@@ -231,7 +231,9 @@ distro_remove_list()
 
 setup_network_redhat()
 {
-  . /etc/sysconfig/network
+  if [ -f /etc/sysconfig/network ]; then
+    . /etc/sysconfig/network
+  fi
 
   for f in /etc/sysconfig/networking/ifcfg-*; do
     unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT GATEWAY \
@@ -397,7 +399,7 @@ DEBIAN_DIR=$DEBIAN_VERSION-chroot
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
-# Pure non-Debian system
+# Impure non-Debian system
 
 check_needed
 distro_detect
