@@ -2,5 +2,6 @@
 
 	* debtakeover (debian_dump): Call ldconfig before using msg, so it
 	does not fail when the distro glibc is older than the Debian one.
+	(sigerror): Fix typo.
 	* ChangeLog: New file.
 

@@ -76,7 +76,7 @@ error()
 
 sigerror()
 {
-  echo "Unexpected error, please report it with full logs it to: "
+  echo "Unexpected error, please report it with full logs to: "
   echo "  $BUGS_ADDRESS"
 }
 
