@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.50 2003/11/07 16:37:06 guillem Exp $
+# $Id: debtakeover,v 1.51 2003/11/07 16:37:51 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -204,9 +204,7 @@ debian_tarball()
 EOF
 
   msg "-> Generating exclusion file list"
-  ( for f in ${REMOVE_EXCLUDES}; do
-    echo $f
-  done ) > $WORKDIR/debianize-exclude.list
+  echo ${REMOVE_EXCLUDES} | xargs -n1 > $WORKDIR/debianize-exclude.list
 
   msg "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
