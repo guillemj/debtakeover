@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.14 2003/10/27 04:13:19 guillem Exp $
+# $Id: debtakeover,v 1.15 2003/10/27 04:20:50 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ fi
 
 logpipe()
 {
-  if [ $VERBOSE = yes ]; then
+  if [ "$VERBOSE" = "yes" ]; then
     tee -a $LOGFILE
   else
     cat >> $LOGFILE
@@ -298,9 +298,15 @@ distro_trash()
 
 export LC_ALL=C
 
+PROGRAM=debtakeover
+
+if test $# = 0
+then
+  usage
+fi
+
 # Initialize some variables
 
-PROGRAM=debtakeover
 LOGFILE=$PROGRAM.log
 
 DISTRO=unknown
@@ -309,11 +315,6 @@ DEBIAN_VERSION=$1
 DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
 DEBIAN_DIR=$DEBIAN_VERSION-chroot
 shift
-
-if test $# = 0
-then
-  usage
-fi
 
 for args do
   case $args in
