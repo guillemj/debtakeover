@@ -329,10 +329,13 @@ debian_configure()
   msg "Stage (Configuring)"
   msg "-----"
 
-  msg "-> Updating device nodes"
-  cd /dev
-  MAKEDEV update
-  cd -
+  if [ ! -e /dev/.devfsd ]
+    msg "-> Updating device nodes"
+    cd /dev
+    ln -sf /sbin/MAKEDEV
+    ./MAKEDEV update
+    cd -
+  fi
 
   msg "-> Setting up network"
   setup_network_${NETWORK_TYPE} > /etc/network/interfaces
