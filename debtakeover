@@ -304,10 +304,11 @@ debian_configure()
     sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
       < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
 
-    if [ ! -h /sbin/halt ];
+    if [ -h /sbin/reboot ];
     then
-      mv -f /sbin/halt /sbin/halt.disabled
+      mv -f `readlink /sbin/reboot` /sbin/reboot
     fi
+    mv -f /sbin/halt /sbin/halt.disabled
     rm /etc/rc0.d/S??halt
     cp -d /etc/rc6.d/S??reboot /etc/rc0.d
     mv -f /etc/rc1.d /etc/rc1.d.disabled
