@@ -175,8 +175,19 @@ distro_detect()
   msg $DISTRO
 }
 
+generic_exclusion_list()
+{
+  msg "Stage (Building the generic exclusion list)"
+  msg "-----"
 
-debian_tarball()
+  msg "-> Generating exclusion file list"
+  echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} ${DISTRO_EXCLUDES} \
+    | xargs -n1 > $WORKDIR/debianize-exclude.list
+  sed -e 's:^/::' $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-tar-exclude.list
+  STD_FIND_EXCLUDES=`for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done`
+}
+
+debian_tarball_build()
 {
   msg "Stage (Building the base-tarball)"
   msg "-----"
@@ -201,12 +212,6 @@ debian_tarball()
 	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 	deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
-
-  msg "-> Generating exclusion file list"
-  echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} \
-    | xargs -n1 > $WORKDIR/debianize-exclude.list
-  sed -e 's:^/::' $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-tar-exclude.list
-  STD_FIND_EXCLUDES=`for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done`
 
   msg "-> Generating Debian files list"
   chroot $DEBIAN_DIR find / $STD_FIND_EXCLUDES -print \
@@ -461,7 +466,8 @@ distro_detect
 check_needed
 
 if [ "$DISTRO_MIXED" = "no" ]; then
-  debian_tarball
+  generic_exclusion_list
+  debian_tarball_build
   distro_remove_list
   debian_dump
 fi
