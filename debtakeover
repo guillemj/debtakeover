@@ -346,6 +346,7 @@ debian_configure()
   fi
 
   msg "-> Setting up network"
+  mkdir -p /etc/network
   setup_network_${NETWORK_TYPE} > /etc/network/interfaces
   if [ ! -f /etc/hostname ]; then
     hostname -s > /etc/hostname
@@ -439,7 +440,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.6.2
+VERSION=0.6.3
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
