@@ -242,7 +242,7 @@ debian_tarball_prebuilt()
   msg "-----"
 
   msg "-> Generating Debian files list from pre-built tarball"
-  tar tf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR
+  tar tf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
     | sort > $WORKDIR/debianize-debian.list
 }
 
