@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.37 2003/11/01 22:14:24 guillem Exp $
+# $Id: debtakeover,v 1.38 2003/11/01 22:18:37 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -230,33 +230,20 @@ setup_network_redhat()
 {
   . /etc/sysconfig/network
 
-  for f in /etc/sysconfig/network-scripts/ifcfg-*; do
-    unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT || true
+  for f in /etc/sysconfig/networking/ifcfg-*; do
+    unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT GATEWAY \
+      || true
 
     . $f
 
-    if [ "$ONBOOT" = "yes"  ]; then
-      echo "auto $DEVICE"
-    fi
-    if [ -n "$BOOTPROTO" ]; then
-      BOOTPROTO=static
-    fi
+    [ "$ONBOOT" = "yes"  ] && echo "auto $DEVICE"
+    [ -n "$BOOTPROTO" ] && BOOTPROTO=static
     echo "iface $DEVICE inet $BOOTPROTO"
-    if [ -n "$IPADDR" ]; then
-      echo "  address $IPADDR"
-    fi
-    if [ -n "$BRADCAST" ]; then
-      echo "  broadcast $BROADCAST"
-    fi
-    if [ -n "$NETMASK" ]; then
-      echo "  netmask $NETMASK"
-    fi
-    if [ -n "$NETWORK" ]; then
-      echo "  network $NETWORK"
-    fi
-    if [ -n "$GATEWAY" ]; then
-      echo "  gateway $GATEWAY"
-    fi
+    [ -n "$IPADDR" ] && echo "  address $IPADDR"
+    [ -n "$BRADCAST" ] && echo "  broadcast $BROADCAST"
+    [ -n "$NETMASK" ] && echo "  netmask $NETMASK"
+    [ -n "$NETWORK" ] && echo "  network $NETWORK"
+    [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
     echo
   done
 }
@@ -326,8 +313,8 @@ debian_dump()
   cd /
 
   echo "-> Making backups of important data"
-  tar czvf ~/$DISTRO-etc.tgz /etc | logpipe
-  tar czvf ~/$DISTRO-log.tgz /var/log | logpipe
+  tar czvf ~/$DISTRO-etc.tgz /etc 2>&1 | logpipe
+  tar czvf ~/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   echo "-> Dumping Debian over $DISTRO"
   tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --recursive-unlink \
@@ -358,7 +345,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.1
+VERSION=0.2
 
 # Process command line arguments
 
