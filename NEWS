@@ -2,6 +2,7 @@ Version SVN
 
  - Added a ChangeLog file.
  - Fix error before ldconfig if the distro glibc is older than the Debian one.
+ - Detect more distros: ArchLinux.
 
 Version 0.8
 
