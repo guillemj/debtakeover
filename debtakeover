@@ -156,10 +156,12 @@ distro_detect()
          -e /etc/fedora-release ]
   then
     DISTRO=redhat
+    NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
   elif [ -e /etc/SuSE-release ]
   then
-#    DISTRO=suse
-    warning 3 "SuSE not supported yet."
+    DISTRO=redhat
+    NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network
+    # SuSE version < 8.0 used /etc/rc.config
   elif [ -e /etc/slackware-version ]
   then
 #    DISTRO=slackware
@@ -276,13 +278,13 @@ setup_network_redhat()
     . /etc/sysconfig/network
   fi
 
-  for f in /etc/sysconfig/network-scripts/ifcfg-*; do
+  for f in $NETWORK_REDHAT_CONF_DIR/ifcfg-*; do
     unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT GATEWAY \
       || true
 
     . $f
 
-    [ "$ONBOOT" = yes  ] && echo "auto $DEVICE"
+    [ "$ONBOOT" = yes -o "$STARTMODE" = onboot ] && echo "auto $DEVICE"
     if [ -z "$BOOTPROTO" -o "$BOOTPROTO" = static -o "$BOOTPROTO" = none ]; then
       NET_METHOD=static
     elif [ "$DEVICE" = lo ]; then
@@ -308,8 +310,15 @@ setup_network_gentoo()
 
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
+    
     :
   done
+}
+
+setup_network_slackware()
+{
+  # /etc/rc.d/rc.inet1
+  :
 }
 
 setup_network_unknown()
@@ -412,7 +421,7 @@ distro_trash()
   ldconfig
 
   msg "-> Removing remaining $DISTRO directories"
-  cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null \
+  cat $WORKDIR/debianize-remove.list | sort -r | xargs rmdir 2> /dev/null \
     | logpipe || true
 }
 
