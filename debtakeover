@@ -32,13 +32,7 @@ REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/passwd /etc/shadow /etc/group /etc/gshadow
         /etc/ssh/ssh_host_*"
 
-STD_FIND_EXCLUDES="\
-        -path '/tmp' -prune -o \
-        -path '/root' -prune -o \
-        -path '/home' -prune -o \
-        -path '/dev' -prune -o \
-        -path '/proc' -prune -o \
-        -path '/sys' -prune"
+STD_EXCLUDES="/tmp /root /home /dev /proc /sys"
 
 DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
@@ -204,16 +198,19 @@ debian_tarball()
 EOF
 
   msg "-> Generating exclusion file list"
-  echo ${REMOVE_EXCLUDES} | xargs -n1 > $WORKDIR/debianize-exclude.list
+  echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} \
+    | xargs -n1 > $WORKDIR/debianize-exclude.list
+  sed -e 's:^/::' debianize-exclude.list > debianize-tar-exclude.list
+  STD_FIND_EXCLUDES=`for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done`
 
   msg "-> Generating Debian files list"
-  chroot $DEBIAN_DIR find / $STD_FIND_EXCLUDES -o -print \
+  chroot $DEBIAN_DIR find / $STD_FIND_EXCLUDES -print \
     | sort > $WORKDIR/debianize-debian.list
 
   msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
     tar cf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 \
-      -X $WORKDIR/debianize-exclude.list * )
+      -X $WORKDIR/debianize-tar-exclude.list * )
 
   msg "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR
@@ -227,7 +224,7 @@ distro_remove_list()
   msg "-> Generating distro files list"
   find / \
     $STD_FIND_EXCLUDES \
-    -o -path '/boot' -prune \
+       -path '/boot' -prune \
     -o -path '/var/run' -prune \
     -o -path '/var/log' -prune \
     -o -path '/var/local' -prune \
@@ -336,11 +333,11 @@ debian_dump()
   tar czvf $WORKDIR/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   msg "-> Removing symlinks to directories"
-  find / $STD_FIND_EXCLUDES -o -type l -xtype d -print | xargs rm -f || true
+  find / $STD_FIND_EXCLUDES -type l -xtype d -print | xargs rm -f || true
 
   msg "-> Dumping Debian over $DISTRO"
-  tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
-    | logpipe || true
+  tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner \
+    -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
 
   hash -r
   ldconfig
