@@ -361,6 +361,7 @@ debian_preconfigure()
   fi
 
   msg "-> Preserving $DISTRO distro module configuration"
+  mkdir -p /etc/modutils
   if [ -f /etc/conf.modules ]; then
     cat /etc/conf.modules >> /etc/modutils/$DISTRO
   fi
