@@ -143,7 +143,7 @@ distro_detect()
          -e /etc/fedora-release ]
   then
     DISTRO=redhat
-  elif [ -e /etc/SuSe-release ]
+  elif [ -e /etc/SuSE-release ]
   then
     DISTRO=suse
   elif [ -e /etc/slackware-version ]
