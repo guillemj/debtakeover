@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.39 2003/11/01 22:24:44 guillem Exp $
+# $Id: debtakeover,v 1.40 2003/11/01 22:42:57 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,10 +24,6 @@
 #
 # User modifiable variables
 #
-
-DEFAULT_MIRROR=http://ftp.no.debian.org
-DEFAULT_SUITE=woody
-DEFAULT_PROFILE=colo
 
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
@@ -79,8 +75,13 @@ error()
 
 usage()
 {
-  echo "usage: $PROGRAM <suite> <options>"
-  echo "otpions: --verbose | --version | --help"
+  echo "usage: $PROGRAM <options>"
+  echo "    --profile=string	(default '$DEFAULT_PROFILE')"
+  echo "    --suite=string	(default '$DEFAULT_SUITE')"
+  echo "    --mirror=url	(default '$DEFAULT_MIRROR')"
+  echo "    --verbose"
+  echo "    --version"
+  echo "    --help"
   exit 0
 }
 
@@ -345,17 +346,25 @@ export LC_ALL=C
 PROGRAM=debtakeover
 VERSION=0.2
 
-# Process command line arguments
+DEFAULT_MIRROR=http://ftp.no.debian.org
+DEFAULT_SUITE=woody
+DEFAULT_PROFILE=colo
 
-if test $# = 0
-then
-  usage
-fi
+# Process command line arguments
 
 for args do
   case $args in
     --verbose)
       VERBOSE=yes
+      ;;
+    --profile=*)
+      PROFILE=`echo $1 | sed 's/--profile=//'`
+      ;;
+    --mirror=*)
+      MIRROR=`echo $1 | sed 's/--mirror=//'`
+      ;;
+    --suite=*)
+      SUITE=`echo $1 | sed 's/--suite=//'`
       ;;
     --version)
       echo "$PROGRAM $VERSION"
@@ -365,7 +374,8 @@ for args do
       usage
       ;;
     *)
-      SUITE=$1
+      error 0 "Unrecognized options."
+      usage
       ;;
   esac
   shift
@@ -378,12 +388,12 @@ LOGFILE=$PROGRAM.log
 DISTRO=unknown
 DISTRO_MIXED=no
 
-DEBIAN_MIRROR=$DEFAULT_MIRROR
+DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
 DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
 DEBIAN_DIR=$DEBIAN_VERSION-chroot
 
-DEBTAKEOVER_PROFILE=$DEFAULT_PROFILE
+DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
 # Pure non-Debian system
 
