@@ -92,6 +92,8 @@ usage()
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
 	    --tarball=file	Debian base tarball
 	    --debootstrap=path	Debootstrap compatible binary (default "$DEFAULT_DEBOOTSTRAP")
+	    --debootstrap-args=string
+				Debootstrap extra arguments
 	    --force-purify	Force the purification (non-interactive)
 	    --force-retakeover	Force taking over a Debian system
 	    --verbose		Be more verbose
@@ -248,7 +250,8 @@ debian_tarball_build()
   msg "-----"
 
   msg "-> Debootstrapping"
-  $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
+  $DEBOOTSTRAP $DEBOOTSTRAP_ARGS \
+    --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
 
@@ -550,6 +553,9 @@ for arg do
     --debootstrap=*)
       USER_DEBOOTSTRAP=$arg_value
       ;;
+    --debootstrap-args=*)
+      USER_DEBOOTSTRAP_ARGS=$arg_value
+      ;;
     --force-purify)
       FORCE_PURIFY=yes
       ;;
@@ -589,6 +595,7 @@ DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
 DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
+DEBOOTSTRAP_ARGS=$USER_DEBOOTSTRAP_ARGS
 DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
 	/var/lib/apt/lists /var/cache/apt"
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"

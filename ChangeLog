@@ -1,3 +1,10 @@
+2004-12-10  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover (USER_DEBOOSTRAP_ARGS, DEBOOTSTRAP_ARGS): New variables.
+	Recognise --debootstrap-args and set those pariables.
+	* debtakeover.1: Document new --debootstrap-args parameter.
+	* NEWS: Likewise.
+
 2004-06-25  Guillem Jover  <guillem@debian.org>
 
 	* debtakeover (debian_dump): Call ldconfig before using msg, so it

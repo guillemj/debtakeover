@@ -3,6 +3,7 @@ Version SVN
  - Added a ChangeLog file.
  - Fix error before ldconfig if the distro glibc is older than the Debian one.
  - Detect more distros: ArchLinux.
+ - New option to pass extra arguments to debootstrap.
 
 Version 0.8
 
