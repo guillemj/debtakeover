@@ -4,8 +4,14 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.2 2003/07/19 12:40:31 guillem Exp $
+# $Id: debtakeover,v 1.3 2003/09/02 03:20:38 guillem Exp $
 #
+
+if test $# = 0
+then
+  echo "usage: $0 <suite>"
+  exit
+fi
 
 DEBIAN_MIRROR=http://ftp.no.debian.org
 DEBIAN_VERSION=$1
@@ -23,6 +29,8 @@ else
   DEBOOTSTRAP_EXCLUDES=""
 fi
 
+DISTRO=none
+
 setup_chroot()
 {
   mount /proc
@@ -34,8 +42,8 @@ setup_chroot()
     rm -f /etc/$f
   done
 
-  rm /var/lib/apt/lists/*_{Sources,Packages,Release}
-  rm /var/cache/apt/{*.bin,archives/*.deb}
+  rm -f /var/lib/apt/lists/*_{Sources,Packages,Release}
+  rm -f /var/cache/apt/{*.bin,archives/*.deb}
 
   if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
     mv -f /sbin/halt /sbin/reboot
@@ -57,7 +65,44 @@ setup_chroot()
   exit 0
 }
 
-stage_tarball()
+distro_detect()
+{
+  echo "Stage (Detecting current Distro)"
+  echo "-----"
+
+  if [ -e /etc/debian_version ]
+  then
+    echo "You already have a Debian system"
+    exit 1
+  elif [ -e /etc/slackware-version ]
+  then
+    DISTRO=slackware
+    exit 0
+  elif [ -e /etc/mandrake-release ]
+  then
+    DISTRO=redhat
+  elif [ -e /etc/redhat-release ]
+  then
+    DISTRO=redhat
+  elif [ -e /etc/SuSe-release ]
+  then
+    DISTRO=suse
+    exit 0
+  elif [ -e /etc/gentoo-release ]
+  then
+    DISTRO=gentoo
+    exit 0
+  elif [ -e /etc/cobalt-release ]
+  then
+    DISTRO=cobalt
+    exit 0
+  fi
+
+  echo $DISTRO
+}
+
+
+debian_tarball()
 {
   echo "Stage (Building the base-tarball)"
   echo "-----"
@@ -83,7 +128,7 @@ EOF
   tar cvjf ../$DEBIAN_VERSION-tarball.tar.bz2 *
 }
 
-stage_remove_list()
+distro_remove_list()
 {
   echo "Stage (Building the remove list)"
   echo "-----"
@@ -104,16 +149,13 @@ stage_remove_list()
     -o -path '/var/local' -prune \
     -o -path '/usr/local' -prune \
     -o -path '/lib/modules' -prune \
-    -o -print | sort > ~/debianize-redhat.list
-  diff -u debianize-redhat.list debianize-debian.list | tail +2 | \
+    -o -print | sort > ~/debianize-$DISTRO.list
+  diff -u debianize-$DISTRO.list debianize-debian.list | tail +2 | \
     grep '^-' | sed -e 's,^-,,' > debianize-remove.list
 }
 
-setup_network()
+setup_network_redhat()
 {
-  echo "Stage (Setting up network)"
-  echo "-----"
-
   . /etc/sysconfig/network
 
   for f in /etc/sysconfig/network-scripts/ifcfg-*; do
@@ -143,7 +185,15 @@ setup_network()
   done
 }
 
-stage_configure()
+setup_network()
+{
+  echo "Stage (Setting up network)"
+  echo "-----"
+
+  setup_network_${DISTRO}
+}
+
+debian_configure()
 {
   echo "Stage (Configuring)"
   echo "-----"
@@ -152,25 +202,25 @@ stage_configure()
 
   passwd
 
-  #Add a kernel paramater "panic=30"
+  # TODO: Add a kernel paramater "panic=30"
   dpkg --configure -a
   update-modules
 }
 
-stage_dump()
+debian_dump()
 {
   echo "Stage (Dump the tarball)"
   echo "-----"
 
   cd /
-  tar czvf ~/redhat-etc.tgz /etc
-  tar czvf ~/redhat-log.tgz /var/log
+  tar czvf ~/$DISTRO-etc.tgz /etc
+  tar czvf ~/$DISTRO-log.tgz /var/log
   tar xvf ~/$DEBIAN_VERSION-tarball.tar.bz2 --bzip2 -p -U --numeric-owner
   ldconfig
   hash -r
 }
 
-stage_trash()
+distro_trash()
 {
   echo "Stage (Trash the old system)"
   echo "-----"
@@ -186,11 +236,16 @@ if [ "$1" = "--chroot" ]; then
   exit 0
 fi
 
-stage_tarball
-stage_remove_list
-stage_dump
-stage_configure
-stage_trash
+# Pure non-Debian system
+distro_detect
+debian_tarball
+exit 0
+distro_remove_list
+debian_dump
+# Mixed system
+debian_configure
+distro_trash
+# Pure Debian system
 
 exit 0
 
