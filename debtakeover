@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.1 2003/07/19 12:12:42 guillem Exp $
+# $Id: debtakeover,v 1.2 2003/07/19 12:40:31 guillem Exp $
 #
 
 DEBIAN_MIRROR=http://ftp.no.debian.org
@@ -14,6 +14,7 @@ shift
 ETC_EXCLUDES="mtab fstab hostname hosts resolv.conf lilo.conf modules
         modules.conf ssh/ssh_host_*"
 
+DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
 if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
@@ -61,7 +62,7 @@ stage_tarball()
   echo "Stage (Building the base-tarball)"
   echo "-----"
 
-  ./debootstrap --include="$DEBOOTSTRAP_INCLUDES" \
+  $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_VERSION-tarball $DEBIAN_MIRROR/debian
 
