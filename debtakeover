@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.28 2003/11/01 01:07:42 guillem Exp $
+# $Id: debtakeover,v 1.29 2003/11/01 01:46:31 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -189,6 +189,7 @@ debian_tarball()
   echo "Stage (Building the base-tarball)"
   echo "-----"
 
+  echo "-> Debootstrapping"
   $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian | logpipe
