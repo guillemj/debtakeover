@@ -23,22 +23,22 @@ Debian. Its main purpose is to be used on a colocated server, where you do not
 have physical access to the host.
 .SH OPTIONS
 .TP
-.B \-\-profile=string
-Installation profile (default "colo"). Set it to "none" to disable.
+.BI \-\-profile= string
+Installation profile (default "\fIcolo\fP"). Set it to "\fInone\fP" to disable.
 .TP
-.B \-\-suite=string
-Debian suite (default "woody").
+.BI \-\-suite= string
+Debian suite (default "\fIwoody\fP").
 .TP
-.B \-\-mirror=url
-Debian mirror (default "http://ftp.no.debian.org/").
+.BI \-\-mirror= url
+Debian mirror (default "\fIhttp://ftp.no.debian.org/\fP").
 .TP
-.B \-\-tarball=file
-Debian base tarball. It supports compressed tarballs with gzip, bzip2 and
-compress.
+.BI \-\-tarball= file
+Debian base tarball to use instead of generating one with debootstrap. It
+supports compressed tarballs with gzip, bzip2 and compress.
 .TP
-.B \-\-debootstrap=path
-Debootstrap compatible binary (default "debootstrap"). Other alternatives that
-may not work are \fBcdebootstrap\fP and \fBcrosshurd\fP.
+.BI \-\-debootstrap= path
+Debootstrap compatible binary (default "\fIdebootstrap\fP"). Other alternatives
+that may not work are \fBcdebootstrap\fP and \fBcrosshurd\fP.
 .TP
 .B \-\-force-purify
 Force the purification (non-interactive). Do not ask for confirmation.
@@ -48,7 +48,8 @@ Force taking over a Debian system. Useful when converting derived Debian
 distros or to reinstall a system from scratch.
 .TP
 .B \-\-verbose
-Be more verbose.
+Be more verbose. This only afects the output to the terminal, the logs retain
+all important information.
 .TP
 .B \-\-version
 Print program version.
