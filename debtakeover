@@ -34,14 +34,6 @@ REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
 
 STD_EXCLUDES="/tmp /root /home /opt /dev /proc /sys"
 
-DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
-if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
-  DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
-pppoe,pppoeconf"
-else
-  DEBOOTSTRAP_EXCLUDES=""
-fi
-
 WORKDIR=~
 
 #
@@ -440,14 +432,14 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.6.3
+VERSION=0.6.4
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
 DEFAULT_SUITE=woody
 DEFAULT_TARBALL=debian-$DEFAULT_SUITE.tar.bz2
 DEFAULT_PROFILE=colo
-DEFAULT_DEBOOTSTRAP=./debootstrap
+DEFAULT_DEBOOTSTRAP=debootstrap
 
 # Process command line arguments
 
@@ -524,6 +516,14 @@ DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
+
+DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
+if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
+  DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
+pppoe,pppoeconf"
+else
+  DEBOOTSTRAP_EXCLUDES=""
+fi
 
 # Impure non-Debian system
 

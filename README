@@ -3,7 +3,7 @@ Migrating a running distro to Debian
 
   $Id$
 
-  Copyright (C) 2003  Guillem Jover <guillem@debian.org>
+  Copyright (C) 2003, 2004  Guillem Jover <guillem@debian.org>
   Distributed subject to the GNU General Public License, version 2.
 
 Introduction
@@ -46,7 +46,12 @@ You will need deboostrap, that can be found on:
 Usage
 -----
 
-Build debootstrap, and place it on some directory excluded by debtakeover.
-Place debtakeover in the same directory. I usually put them on /root.
+Build debootstrap, and use "make install" to place it on some directories
+excluded by debtakeover and in the PATH. Place debtakeover in another
+excluded directory and also available in the PATH.
+
 Take a look at debtakeover's --help option.
+
+By default it installs a stable suite, and uses the colo profile.
+
 
