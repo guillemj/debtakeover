@@ -412,14 +412,14 @@ distro_trash()
 
   msg "-> Removing remaining $DISTRO files"
   cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null \
-    | logpipe || true
+    | ( ldconfig; logpipe ) || true
 
   msg "-> Regenerating linker configuration"
   ldconfig
 
   msg "-> Removing remaining $DISTRO directories"
   cat $WORKDIR/debianize-remove.list | sort -r | xargs rmdir 2> /dev/null \
-    | logpipe || true
+    | ( ldconfig; logpipe ) || true
 }
 
 
