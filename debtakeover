@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.35 2003/11/01 19:58:02 guillem Exp $
+# $Id: debtakeover,v 1.36 2003/11/01 20:39:29 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ error()
 usage()
 {
   echo "usage: $PROGRAM <suite> <options>"
-  echo "otpions: --verbose | --version"
+  echo "otpions: --verbose | --version | --help"
   exit 0
 }
 
@@ -320,10 +320,10 @@ debian_configure()
   dpkg --configure -a
 
   echo "-> Setting up module configuration"
-  if [ -e /etc/conf.modules ]; then
+  if [ -f /etc/conf.modules ]; then
     cat /etc/conf.modules >> /etc/modutils/$DISTRO
   fi
-  if [ -e /etc/modules.conf ]; then
+  if [ -f /etc/modules.conf ]; then
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
   update-modules
