@@ -206,6 +206,9 @@ distro_detect()
   elif [ -e /etc/turbolinux-release ]
   then
     DISTRO=turbolinux
+  elif [ -e /etc/arch-release ]
+  then
+    DISTRO=archlinux
   fi
 
   if [ -e /etc/debian_version ]
