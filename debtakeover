@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.24 2003/10/29 05:59:20 guillem Exp $
+# $Id: debtakeover,v 1.25 2003/10/29 06:09:07 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,9 +57,19 @@ log()
   echo -e "$@" | logpipe
 }
 
+warning()
+{
+  echo -e "warning: $@" >&2
+}
+
 error()
 {
-  echo -e "$@" >&2
+  code=$1
+  shift
+  echo -e "error: $@" >&2
+  if [ $code != 0 ]; then
+    exit $code
+  fi
 }
 
 usage()
@@ -122,8 +132,7 @@ check_needed()
   done
 
   if [ -n "$CHECK_ERROR" ]; then
-    error "$CHECK_ERROR"
-    exit 2
+    error 2 "$CHECK_ERROR"
   fi
 }
 
@@ -139,24 +148,23 @@ distro_detect()
   elif [ -e /etc/slackware-version ]
   then
     DISTRO=slackware
-    exit 0
+    error 3 "Slackware not supported yet."
   elif [ -e /etc/gentoo-release ]
   then
     DISTRO=gentoo
-    exit 0
+    error 3 "Gentoo not supported yet."
   elif [ -e /etc/cobalt-release ]
   then
     DISTRO=cobalt
-    exit 0
+    error 3 "Cobalt not supported yet."
   fi
 
   if [ -e /etc/debian_version ]
   then
     if [ "$DISTRO" = "unknown" ]; then
-      error "You already have a Debian system"
-      exit 1
+      error 1 "You already have a Debian system"
     else
-      error "You have a mixed system, trying to continue"
+      warning "You have a mixed system, trying to continue"
       DISTRO_MIXED=yes
     fi
   fi
@@ -264,13 +272,13 @@ setup_network_gentoo()
 {
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
-    error "warning: gentoo does not have yet a network conversion script."
+    warning "Gentoo does not have yet a network conversion script."
   done
 }
 
 setup_network_unknown()
 {
-  error "warning: unknwown distro, does not have network conversion scripts."
+  warning "Unknwown distro, does not have network conversion scripts."
 }
 
 setup_network()
@@ -370,7 +378,7 @@ for args do
       VERBOSE=yes
       ;;
     *)
-      error "error: unrecognized option"
+      error 0 "Unrecognized option."
       usage
       ;;
   esac
