@@ -302,7 +302,7 @@ debian_configure()
     # TODO: Add a kernel paramater "panic=30"
 
     sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
-      < /etc/defaults/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/defaults/
+      < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
 
     mv -f /sbin/halt /sbin/halt.disabled
     rm /etc/rc0.d/S??halt
