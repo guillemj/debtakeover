@@ -32,7 +32,7 @@ REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/passwd /etc/shadow /etc/group /etc/gshadow
         /etc/ssh/ssh_host_*"
 
-STD_EXCLUDES="/tmp /root /home /dev /proc /sys"
+STD_EXCLUDES="/tmp /root /home /opt /dev /proc /sys"
 
 DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
