@@ -229,7 +229,7 @@ EOF
 
   msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
-    tar cf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
+    tar cf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
       -X $WORKDIR/debianize-tar-exclude.list * )
 
   msg "-> Cleaning Debian chroot"
@@ -242,7 +242,7 @@ debian_tarball_prebuilt()
   msg "-----"
 
   msg "-> Generating Debian files list from pre-built tarball"
-  tar tf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
+  tar tf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
     | sort > $WORKDIR/debianize-debian.list
 }
 
@@ -373,7 +373,7 @@ debian_dump()
   find / $STD_FIND_EXCLUDES -type l -xtype d -print | xargs rm -f || true
 
   msg "-> Dumping Debian over $DISTRO"
-  tar xvf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
+  tar xvf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
     -p -U -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
 
   msg "-> Regenerating linker configuration"
@@ -472,7 +472,7 @@ DISTRO_MIXED=no
 
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
-DEBIAN_TARBALL=${TARBALL:-debian-$DEBIAN_VERSION.tar.bz2}
+DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.bz2}
 DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---bzip2}
 DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 
