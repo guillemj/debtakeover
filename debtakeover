@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.30 2003/11/01 06:02:02 guillem Exp $
+# $Id: debtakeover,v 1.31 2003/11/01 07:54:19 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,10 +87,6 @@ setup_chroot()
   sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
     < /etc/defaults/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/defaults/
 
-  for f in $REMOVE_EXCLUDES; do
-    rm -f $f
-  done
-
   rm -f /var/lib/apt/lists/*_{Sources,Packages,Release}
   rm -f /var/cache/apt/{*.bin,archives/*.deb}
 
@@ -103,8 +99,6 @@ setup_chroot()
 
     rmdir /cdrom /floppy
   fi
-
-  dpkg-reconfigure -s base-passwd passwd
 
   rm -rf /dev
   update-inetd --multi --disable discard,daytime,time
@@ -209,8 +203,10 @@ EOF
   cp $0 $DEBIAN_DIR/tmp/
   chroot $DEBIAN_DIR/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
 
-  echo "-> Packaging Debian chroot"
-  ( cd $DEBIAN_DIR; tar cf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 * )
+  echo "-> Generating exclusion file list"
+  ( for f in ${REMOVE_EXCLUDES}; do
+    echo $f
+  done ) > ~/debianize-exclude.list
 
   echo "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
@@ -218,6 +214,10 @@ EOF
       -path '/dev' -prune \
       -o -path '/proc' -prune \
       -o -print ) | sed -e 's,^\.,,' | sort > ~/debianize-debian.list
+
+  echo "-> Packaging Debian chroot"
+  ( cd $DEBIAN_DIR; \
+    tar cf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -X ~/debianize-exclude.list * )
 
   echo "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR
@@ -242,11 +242,6 @@ distro_remove_list()
     -o -path '/usr/local' -prune \
     -o -path '/lib/modules' -prune \
     -o -print | sort > ~/debianize-$DISTRO.list
-
-  echo "-> Generating exclusion file list"
-  ( for f in ${REMOVE_EXCLUDES}; do
-    echo $f
-  done ) > ~/debianize-exclude.list
 
   echo "-> Generating distro files removal list"
   diff -u ~/debianize-$DISTRO.list ~/debianize-debian.list | tail +2 | \
@@ -343,8 +338,8 @@ debian_dump()
   tar czvf ~/$DISTRO-log.tgz /var/log | logpipe
 
   echo "-> Dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 | \
-    logpipe || true
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --recursive-unlink \
+    --numeric-owner 2>&1 | logpipe || true
 
   hash -r
   ldconfig
@@ -361,7 +356,6 @@ distro_trash()
   hash -r
   echo "!!! DANGER WILL ROBINSON !!!"
   echo "reboot when done."
-#  reboot
 }
 
 #
@@ -371,6 +365,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
+VERSION=0.1
 
 if test $# = 0
 then
@@ -397,6 +392,9 @@ for args do
       ;;
     --verbose)
       VERBOSE=yes
+      ;;
+    --version)
+      echo "$PROGRAM $VERSION"
       ;;
     *)
       error 0 "Unrecognized option."
