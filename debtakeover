@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.16 2003/10/28 21:21:58 guillem Exp $
+# $Id: debtakeover,v 1.17 2003/10/28 21:25:56 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -256,8 +256,10 @@ debian_configure()
 
   setup_network
 
+  echo "-> Setting up password configuration"
   passwd
 
+  echo "-> Setting up remaing configurations"
   # TODO: Add a kernel paramater "panic=30"
   dpkg --configure -a
   update-modules
@@ -270,16 +272,16 @@ debian_dump()
 
   cd /
 
-  echo "-> making backups of important data"
+  echo "-> Making backups of important data"
   tar czvf ~/$DISTRO-etc.tgz /etc | logpipe
   tar czvf ~/$DISTRO-log.tgz /var/log | logpipe
 
-  echo "-> dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner | \
+  echo "-> Dumping Debian over $DISTRO"
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 | \
     logpipe || true
 
-  ldconfig
   hash -r
+  ldconfig
 }
 
 distro_trash()
