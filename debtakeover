@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.42 2003/11/02 00:23:32 guillem Exp $
+# $Id: debtakeover,v 1.43 2003/11/02 01:50:03 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -322,8 +322,8 @@ debian_dump()
   tar czvf ~/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   echo "-> Dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --recursive-unlink \
-    --numeric-owner 2>&1 | logpipe || true
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
+    | logpipe || true
 
   hash -r
   ldconfig
