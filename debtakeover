@@ -135,7 +135,7 @@ check_needed()
     error 2 "Please install missing software and try again."
   fi
 
-  if [ "$FORCE_PURIFY" = no ]; then
+  if [ "$FORCE_PURIFY" != yes ]; then
     REPLY_CHECK="Yes I am"
     warning "Are you sure what are you going to do ? [$REPLY_CHECK]"
     read
