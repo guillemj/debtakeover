@@ -30,7 +30,7 @@
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
         /etc/passwd /etc/shadow /etc/group /etc/gshadow /etc/grub.conf
-        /etc/ssh/ssh_host_*"
+        /etc/ssh/ssh_host_* /etc/network/interfaces"
 
 STD_EXCLUDES="/tmp /root /home /opt /dev /proc /sys"
 
@@ -188,6 +188,7 @@ distro_detect()
     if [ "$DISTRO" = unknown ]; then
       if [ "$FORCE_RETAKEOVER" = yes ]; then
         DISTRO=debian
+        NETWORK_TYPE=debian
         warning "Taking over a Debian system"
       else
         error 1 "You already have a Debian system"
@@ -283,6 +284,11 @@ distro_remove_list()
   diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list \
     | tail +2 | grep '^-' | sed -e 's,^-,,' \
     | grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
+}
+
+setup_network_debian()
+{
+  msg "-> Keeping Debian network config" >&2
 }
 
 setup_network_redhat()
