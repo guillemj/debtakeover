@@ -462,9 +462,8 @@ debian_dump()
   msg "-> Dumping Debian over $DISTRO distro"
   tar xvf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
     -p -U -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
-
-  msg "-> Regenerating linker configuration"
   ldconfig
+  msg "-> Linker configuration regenerating"
 }
 
 distro_trash()
