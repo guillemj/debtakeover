@@ -224,6 +224,11 @@ debian_tarball_build()
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
 
+  msg "-> Checking chroot sanity"
+  for d in $DEBOOTSTRAP_CHECK_DIRS; do
+    [ -d $DEBIAN_DIR$d ] || error 2 "Bad chroot, clean, correct, and try again."
+  done
+
   msg "-> Removing unneeded files"
   rm -f $DEBIAN_DIR/var/lib/apt/lists/*_{Sources,Packages,Release}
   rm -f $DEBIAN_DIR/var/cache/apt/{*.bin,archives/*.deb}
@@ -549,6 +554,8 @@ DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
+DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
+	/var/lib/apt/lists /var/cache/apt"
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
 if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
