@@ -491,6 +491,9 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 
 for arg do
   arg_value=`echo $arg | sed 's/--[^= ]*=//'`
+  if echo $arg | grep -- '--[^= ]*=' >& /dev/null && [ -z "$arg_value" ]; then
+    error 8 "Missing option value for '$arg'."
+  fi
   case $arg in
     --verbose)
       VERBOSE=yes

@@ -18,5 +18,6 @@ Version UNRELEASED
  - Fix loopback config generation in RedHat network conversion.
  - Fix root's PATH breakage on RedHat systems after logout.
  - Fix not found user specified tarball w/o an absolute path.
+ - Make argument parsing more robust.
  - Added a signal error handler.
 
