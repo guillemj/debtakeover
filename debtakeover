@@ -226,6 +226,16 @@ EOF
   rm -rf $DEBIAN_DIR
 }
 
+debian_tarball_prebuilt()
+{
+  msg "Stage (Setting up pre-built base-tarball)"
+  msg "-----"
+
+  msg "-> Generating Debian files list from pre-built tarball"
+  tar tf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR
+    | sort > $WORKDIR/debianize-debian.list
+}
+
 distro_remove_list()
 {
   msg "Stage (Building the remove list)"
@@ -467,7 +477,11 @@ check_needed
 
 if [ "$DISTRO_MIXED" = "no" ]; then
   generic_exclusion_list
-  debian_tarball_build
+  if [ "$TARBALL" -a -e "$WORKDIR/$TARBALL" ]; then
+    debian_tarball_prebuilt
+  else
+    debian_tarball_build
+  fi
   distro_remove_list
   debian_dump
 fi
