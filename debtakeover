@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.32 2003/11/01 08:04:33 guillem Exp $
+# $Id: debtakeover,v 1.33 2003/11/01 18:09:38 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ DEFAULT_SUITE=woody
 
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
+        /etc/passwd /etc/shadow /etc/group /etc/gshadow
         /etc/ssh/ssh_host_*"
 
 DEBOOTSTRAP=./debootstrap
@@ -299,21 +300,18 @@ setup_network_unknown()
   warning "Unknwown distro, does not have network conversion scripts."
 }
 
-setup_network()
-{
-  echo "-> Setting up network"
-
-  setup_network_${DISTRO} > /etc/network/interfaces
-}
-
 debian_configure()
 {
   echo "Stage (Configuring)"
   echo "-----"
 
-  setup_network
+  echo "-> Setting up network"
+  setup_network_${DISTRO} > /etc/network/interfaces
 
   # TODO: Add a kernel paramater "panic=30"
+
+  echo "-> Sanitizing user databases"
+  update-passwd
 
   echo "-> Setting up remaining configurations"
   dpkg --configure -a
