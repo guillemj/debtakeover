@@ -243,7 +243,7 @@ debian_tarball_prebuilt()
 
   msg "-> Generating Debian files list from pre-built tarball"
   tar tf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
-    | sort > $WORKDIR/debianize-debian.list
+    | sort | sed -e 's,^,/,' > $WORKDIR/debianize-debian.list
 }
 
 distro_remove_list()
