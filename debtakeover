@@ -29,7 +29,7 @@
 
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
-        /etc/passwd /etc/shadow /etc/group /etc/gshadow
+        /etc/passwd /etc/shadow /etc/group /etc/gshadow /etc/grub.conf
         /etc/ssh/ssh_host_*"
 
 STD_EXCLUDES="/tmp /root /home /opt /dev /proc /sys"
