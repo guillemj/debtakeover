@@ -322,6 +322,11 @@ debian_configure()
   msg "Stage (Configuring)"
   msg "-----"
 
+  msg "-> Setting up Debian device nodes"
+  cd /dev
+  ./MAKEDEV generic
+  cd -
+
   msg "-> Setting up network"
   setup_network_${DISTRO} > /etc/network/interfaces
   if [ ! -f /etc/hostname ]; then
