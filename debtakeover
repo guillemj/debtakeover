@@ -334,7 +334,7 @@ debian_configure()
   msg "Stage (Configuring)"
   msg "-----"
 
-  if [ ! -e /dev/.devfsd ]
+  if [ ! -e /dev/.devfsd ]; then
     msg "-> Updating device nodes"
     cd /dev
     ln -sf /sbin/MAKEDEV
