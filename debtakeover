@@ -94,6 +94,7 @@ usage()
 	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
 	    --tarball=file	Debian base tarball (default "$DEFAULT_TARBALL")
+	    --force-purify	Force the purification (non-interactive)
 	    --verbose		Be more verbose
 	    --version		Print program version
 	    --help		Print this help
@@ -132,6 +133,15 @@ check_needed()
 
   if [ "$CHECK_MISSING" = yes ]; then
     error 2 "Please install missing software and try again."
+  fi
+
+  if [ "$FORCE_PURIFY" = no ]; then
+    REPLY_CHECK="Yes I am"
+    warning "Are you sure what are you going to do ? [$REPLY_CHECK]"
+    read
+    if [ "$REPLY" != "$REPLY_CHECK" ]; then
+      error 20 "Ok, you are not sure. Leaving old system untouched."
+    fi
   fi
 }
 
@@ -434,6 +444,9 @@ for args do
 	  error 10 "Tarball extension not recognized."
 	;;
       esac
+      ;;
+    --force-purify)
+      FORCE_PURIFY=yes
       ;;
     --version)
       echo "$PROGRAM $VERSION"
