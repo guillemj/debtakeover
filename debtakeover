@@ -489,8 +489,8 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 
 # Process command line arguments
 
-for args do
-  case $args in
+for arg do
+  case $arg in
     --verbose)
       VERBOSE=yes
       ;;
@@ -544,7 +544,7 @@ for args do
       usage
       ;;
     *)
-      error 0 "Unrecognized options."
+      error 0 "Unrecognized '$arg' option."
       usage
       ;;
   esac
