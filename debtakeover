@@ -333,7 +333,7 @@ debian_configure()
     msg "-> Updating device nodes"
     cd /dev
     ln -sf /sbin/MAKEDEV
-    ./MAKEDEV update
+    ./MAKEDEV update || true
     cd -
   fi
 
@@ -349,14 +349,14 @@ debian_configure()
     msg "-> Setting up specific colo configurations"
     # TODO: Add a kernel paramater "panic=30"
 
-    sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
-      < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
+    if [ -f /etc/default/rcS ]; then
+      sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
+        < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
+    fi
 
     msg "-> Converting halt to behave as reboot"
-    rm /etc/rc0.d/S??halt
-    cp -d /etc/rc6.d/S??reboot /etc/rc0.d
-
-    rmdir /cdrom /floppy
+    rm -f /etc/rc0.d/S??halt
+    cp -fd /etc/rc6.d/S??reboot /etc/rc0.d
   fi
 
   msg "-> Setting up module configurations"
@@ -375,12 +375,14 @@ debian_configure()
   msg "-> Setting up remaining configurations"
   dpkg --configure -a
 
-  msg "-> Sanitizing root PATH environment variable"
-  cat >> ~/.bash_profile <<-EOF
+  if ! grep ' *PATH=' ~/.bash_profile &> /dev/null; then
+    msg "-> Sanitizing root PATH environment variable"
+    cat >> ~/.bash_profile <<-EOF
 	# Begin: automatically added by debtakeover
 	PATH=/sbin:/usr/sbin:/usr/local/sbin:\$PATH
 	# End
 EOF
+  fi
 }
 
 debian_dump()
