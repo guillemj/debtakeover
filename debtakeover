@@ -140,9 +140,12 @@ distro_detect()
   msg "-----"
 
   if [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
-         -e /etc/SuSe-release -o -e /etc/fedora-release ]
+         -e /etc/fedora-release ]
   then
     DISTRO=redhat
+  elif [ -e /etc/SuSe-release ]
+  then
+    DISTRO=suse
   elif [ -e /etc/slackware-version ]
   then
     DISTRO=slackware
@@ -260,6 +263,11 @@ setup_network_redhat()
     [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
     echo
   done
+}
+
+setup_network_suse()
+{
+  warning "SuSE does not have yet a network conversion script."
 }
 
 setup_network_gentoo()
