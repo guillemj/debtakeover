@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.49 2003/11/07 12:39:01 guillem Exp $
+# $Id: debtakeover,v 1.50 2003/11/07 16:37:06 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -69,16 +69,21 @@ log()
   echo -e "$@" | logpipe
 }
 
+msg()
+{
+  echo -e "$@" | tee -a $LOGFILE
+}
+
 warning()
 {
-  echo -e "warning: $@" >&2
+  msg "warning: $@" >&2
 }
 
 error()
 {
   code=$1
   shift
-  echo -e "error: $@" >&2
+  msg "error: $@" >&2
   if [ $code != 0 ]; then
     exit $code
   fi
@@ -104,16 +109,16 @@ HERE
 
 check_needed()
 {
-  echo "Stage (Checking for needed components)"
-  echo "-----"
+  msg "Stage (Checking for needed components)"
+  msg "-----"
 
-  check_print() { echo -n "-> Checking for $@ ... "; }
+  check_print() { msg -n "-> Checking for $@ ... "; }
 
   check_print "superuser privileges"
   if [ `id -u` = 0 ]; then
-    echo "ok."
+    msg "ok."
   else
-    echo "failed."
+    msg "failed."
     error 4 "You need superuser privileges to run this program."
   fi
 
@@ -123,9 +128,9 @@ check_needed()
   for bin in $DEBOOTSTRAP $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
     check_print "$bin"
     if which $bin >& /dev/null; then
-      echo "found."
+      msg "found."
     else
-      echo "missing."
+      msg "missing."
       local CHECK_MISSING=yes
     fi
   done
@@ -137,8 +142,8 @@ check_needed()
 
 distro_detect()
 {
-  echo "Stage (Detecting current Distro)"
-  echo "-----"
+  msg "Stage (Detecting current Distro)"
+  msg "-----"
 
   if [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
          -e /etc/SuSe-release ]
@@ -168,26 +173,26 @@ distro_detect()
     fi
   fi
 
-  echo $DISTRO
+  msg $DISTRO
 }
 
 
 debian_tarball()
 {
-  echo "Stage (Building the base-tarball)"
-  echo "-----"
+  msg "Stage (Building the base-tarball)"
+  msg "-----"
 
-  echo "-> Debootstrapping"
+  msg "-> Debootstrapping"
   $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
 
-  echo "-> Removing unneeded files"
+  msg "-> Removing unneeded files"
   rm -f $DEBIAN_DIR/var/lib/apt/lists/*_{Sources,Packages,Release}
   rm -f $DEBIAN_DIR/var/cache/apt/{*.bin,archives/*.deb}
   rm -rf $DEBIAN_DIR/dev
 
-  echo "-> Setting up APT sources.list"
+  msg "-> Setting up APT sources.list"
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
   deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
   deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
@@ -198,32 +203,32 @@ debian_tarball()
   deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
 
-  echo "-> Generating exclusion file list"
+  msg "-> Generating exclusion file list"
   ( for f in ${REMOVE_EXCLUDES}; do
     echo $f
   done ) > $WORKDIR/debianize-exclude.list
 
-  echo "-> Generating Debian files list"
+  msg "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
     find . \
       $STD_FIND_EXCLUDES \
       -o -print ) | sed -e 's,^\.,,' | sort > $WORKDIR/debianize-debian.list
 
-  echo "-> Packaging Debian chroot"
+  msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
     tar cf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 \
       -X $WORKDIR/debianize-exclude.list * )
 
-  echo "-> Cleaning Debian chroot"
+  msg "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR
 }
 
 distro_remove_list()
 {
-  echo "Stage (Building the remove list)"
-  echo "-----"
+  msg "Stage (Building the remove list)"
+  msg "-----"
 
-  echo "-> Generating distro files list"
+  msg "-> Generating distro files list"
   find / \
     $STD_FIND_EXCLUDES \
     -o -path '/boot' -prune \
@@ -234,7 +239,7 @@ distro_remove_list()
     -o -path '/lib/modules' -prune \
     -o -print | sort > $WORKDIR/debianize-$DISTRO.list
 
-  echo "-> Generating distro files removal list"
+  msg "-> Generating distro files removal list"
   diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list | \
     tail +2 | grep '^-' | sed -e 's,^-,,' | \
     grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
@@ -279,10 +284,10 @@ setup_network_unknown()
 
 debian_configure()
 {
-  echo "Stage (Configuring)"
-  echo "-----"
+  msg "Stage (Configuring)"
+  msg "-----"
 
-  echo "-> Setting up network"
+  msg "-> Setting up network"
   setup_network_${DISTRO} > /etc/network/interfaces
   if [ ! -f /etc/hostname ]; then
     hostname -s > /etc/hostname
@@ -290,7 +295,7 @@ debian_configure()
   update-inetd --multi --disable discard,daytime,time
 
   if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
-    echo "-> Setting up specific colo configurations"
+    msg "-> Setting up specific colo configurations"
     # TODO: Add a kernel paramater "panic=30"
 
     sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
@@ -305,10 +310,10 @@ debian_configure()
     rmdir /cdrom /floppy
   fi
 
-  echo "-> Sanitizing user databases"
+  msg "-> Sanitizing user databases"
   update-passwd
 
-  echo "-> Setting up module configurations"
+  msg "-> Setting up module configurations"
   if [ -f /etc/conf.modules ]; then
     cat /etc/conf.modules >> /etc/modutils/$DISTRO
   fi
@@ -317,25 +322,25 @@ debian_configure()
   fi
   update-modules
 
-  echo "-> Setting up remaining configurations"
+  msg "-> Setting up remaining configurations"
   dpkg --configure -a
 }
 
 debian_dump()
 {
-  echo "Stage (Dump the tarball)"
-  echo "-----"
+  msg "Stage (Dump the tarball)"
+  msg "-----"
 
   cd /
 
-  echo "-> Making backups of important data"
+  msg "-> Making backups of important data"
   tar czvf $WORKDIR/$DISTRO-etc.tgz /etc 2>&1 | logpipe
   tar czvf $WORKDIR/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
-  echo "-> Removing symlinks to directories"
-  find / $STD_FIND_EXCLUDES -o -type l -xtype d | xargs rm -f || true
+  msg "-> Removing symlinks to directories"
+  find / $STD_FIND_EXCLUDES -o -type l -xtype d -print | xargs rm -f || true
 
-  echo "-> Dumping Debian over $DISTRO"
+  msg "-> Dumping Debian over $DISTRO"
   tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
     | logpipe || true
 
@@ -345,8 +350,8 @@ debian_dump()
 
 distro_trash()
 {
-  echo "Stage (Trash the old system)"
-  echo "-----"
+  msg "Stage (Trash the old system)"
+  msg "-----"
 
   cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null | \
     logpipe || true
@@ -417,6 +422,8 @@ DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
 # Impure non-Debian system
 
+log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
+
 check_needed
 distro_detect
 
@@ -432,7 +439,7 @@ debian_configure
 distro_trash
 
 # Pure Debian system
-echo "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
+msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
 
 exit 0
 
