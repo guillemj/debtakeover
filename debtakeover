@@ -413,7 +413,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.3
+VERSION=0.4
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
