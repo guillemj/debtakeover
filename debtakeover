@@ -437,8 +437,8 @@ log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
 msg "-> Disable bash executable path hashing."
 set +h
 
-check_needed
 distro_detect
+check_needed
 
 if [ "$DISTRO_MIXED" = "no" ]; then
   debian_tarball
