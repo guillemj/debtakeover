@@ -102,6 +102,21 @@ HERE
   exit 0
 }
 
+setup_shell()
+{
+  msg "Stage (Setting up the shell)"
+  msg "-----"
+
+  msg "-> Disable bash executable path hashing."
+  set +h
+
+  # Some old bash versions does not support SIGERR on errors from set -e
+  if trap -p ERR >& /dev/null; then
+    msg "-> Setting signal handler."
+    trap sigerror ERR
+  fi
+}
+
 check_needed()
 {
   msg "Stage (Checking for needed components)"
@@ -586,13 +601,9 @@ fi
 # Impure non-Debian system
 
 log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
+msg "-> Running $PROGRAM $VERSION"
 
-msg "-> $PROGRAM $VERSION"
-msg "-> Disable bash executable path hashing."
-set +h
-
-msg "-> Setting signal handlers."
-trap sigerror ERR
+setup_shell
 
 distro_detect
 check_needed
