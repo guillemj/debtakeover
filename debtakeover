@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.52 2003/11/07 22:10:28 guillem Exp $
+# $Id$
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -146,7 +146,7 @@ distro_detect()
   msg "-----"
 
   if [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
-         -e /etc/SuSe-release ]
+         -e /etc/SuSe-release -o -e /etc/fedora-release ]
   then
     DISTRO=redhat
   elif [ -e /etc/slackware-version ]
