@@ -306,7 +306,7 @@ debian_configure()
 
     if [ -h /sbin/reboot ];
     then
-      mv -f `readlink /sbin/reboot` /sbin/reboot
+      cp -f `readlink /sbin/reboot` /sbin/reboot
     fi
     mv -f /sbin/halt /sbin/halt.disabled
     rm /etc/rc0.d/S??halt
