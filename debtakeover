@@ -307,7 +307,7 @@ setup_network_redhat()
   fi
 
   for f in $NETWORK_REDHAT_CONF_DIR/ifcfg-*; do
-    unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT GATEWAY \
+    unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT \
       || true
 
     . $f

@@ -14,4 +14,5 @@ Version UNRELEASED
  - Make the configure step more robust.
  - Do not remove /cdrom and /floppy dirs.
  - Print version, to trace better user reports.
+ - Preserve gateway setting in the RedHat network conversion.
 
