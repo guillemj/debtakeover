@@ -47,8 +47,8 @@ Usage
 -----
 
 Build debootstrap, and use "make install" to place it on some directories
-excluded by debtakeover and in the PATH. Place debtakeover in another
-excluded directory and also available in the PATH.
+excluded by debtakeover and in the PATH. Place debtakeover in any
+excluded directory and run it from there.
 
 Take a look at debtakeover's --help option.
 
