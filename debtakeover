@@ -145,12 +145,21 @@ distro_detect()
   msg "Stage (Detecting current Distro)"
   msg "-----"
 
-  if [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
-         -e /etc/fedora-release ]
+  # Set default redhat style network conf dir.
+  NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
+
+  if [ -e /etc/mandrake-release ]
+  then
+    DISTRO=mandrake
+    NETWORK_TYPE=redhat
+  elif [ -e /etc/fedora-release ]
+  then
+    DISTRO=fedora
+    NETWORK_TYPE=redhat
+  elif [ -e /etc/redhat-release ]
   then
     DISTRO=redhat
     NETWORK_TYPE=redhat
-    NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
   elif [ -e /etc/SuSE-release ]
   then
     DISTRO=suse
@@ -166,6 +175,12 @@ distro_detect()
   elif [ -e /etc/cobalt-release ]
   then
     DISTRO=cobalt
+  elif [ -e /etc/yellowdog-release ]
+  then
+    DISTRO=yellowdog
+  elif [ -e /etc/turbolinux-release ]
+  then
+    DISTRO=turbolinux
   fi
 
   if [ -e /etc/debian_version ]
