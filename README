@@ -11,7 +11,7 @@ Introduction
 
 This document was created to help migrating a colo server. So it has been
 used in the real world. The previous content that could be found here, was
-non functional, only some initial notes I toke when doing the process by
+non functional, only some initial notes I took when doing the process by
 hand. It has been converted since this summer into a proper scripts.
 One thing that must be understood is that the script is not going to
 convert the whole system to Debian, it will install a clean base system
@@ -27,13 +27,13 @@ Debian. The program is named debtakeover.
 Implementation
 --------------
 
-Currently the script is in beta testing stage, I didn't wanted to release
+Currently the script is in beta testing stage, I didn't want to release
 a broken program that has to do such a critical operation, although by making
 the initial draft public I did precisely this, sorry to anyone who has used
-this previous inmature draft. I've tested the current script on a RedHat and
-on a SuSE. It has some provisions now to be extended to any GNU/Linux
+this previous immature draft. I've tested the current script on RedHat,
+SuSE and Gentoo. It has some provisions now to be extended to any GNU/Linux
 distribution. Next step will be to do cross-installs from for example a
-FreeBSD to a Debian GNU/KFreeBSD or a GNU/Linux system.
+FreeBSD to a Debian GNU/kFreeBSD or a Debian GNU/Linux system.
 
 Current implementation can be found on:
 
