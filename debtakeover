@@ -353,6 +353,9 @@ debian_dump()
   msg "-> Dumping Debian over $DISTRO"
   tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner \
     -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
+
+  msg "-> Regenerating linker configuration"
+  ldconfig
 }
 
 distro_trash()
@@ -360,8 +363,14 @@ distro_trash()
   msg "Stage (Trash the old system)"
   msg "-----"
 
+  msg "-> Removing remaining $DISTRO files"
   cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null \
     | logpipe || true
+
+  msg "-> Regenerating linker configuration"
+  ldconfig
+
+  msg "-> Removing remaining $DISTRO directories"
   cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null \
     | logpipe || true
 }
@@ -429,6 +438,9 @@ DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
 log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
 
+msg "-> Disable bash executable path hashing."
+set +h
+
 check_needed
 distro_detect
 
@@ -436,18 +448,12 @@ if [ "$DISTRO_MIXED" = "no" ]; then
   debian_tarball
   distro_remove_list
   debian_dump
-
-  hash -r
-  ldconfig
 fi
 
 # Mixed system
 
 debian_configure
 distro_trash
-
-hash -r
-ldconfig
 
 # Pure Debian system
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
