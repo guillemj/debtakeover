@@ -203,7 +203,7 @@ EOF
   msg "-> Generating exclusion file list"
   echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} \
     | xargs -n1 > $WORKDIR/debianize-exclude.list
-  sed -e 's:^/::' debianize-exclude.list > debianize-tar-exclude.list
+  sed -e 's:^/::' $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-tar-exclude.list
   STD_FIND_EXCLUDES=`for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done`
 
   msg "-> Generating Debian files list"
