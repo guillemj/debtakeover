@@ -490,21 +490,22 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 # Process command line arguments
 
 for arg do
+  arg_value=`echo $arg | sed 's/--[^= ]*=//'`
   case $arg in
     --verbose)
       VERBOSE=yes
       ;;
     --profile=*)
-      PROFILE=`echo $1 | sed 's/--profile=//'`
+      PROFILE=$arg_value
       ;;
     --mirror=*)
-      MIRROR=`echo $1 | sed 's/--mirror=//'`
+      MIRROR=$arg_value
       ;;
     --suite=*)
-      SUITE=`echo $1 | sed 's/--suite=//'`
+      SUITE=$arg_value
       ;;
     --tarball=*)
-      TARBALL=`echo $1 | sed 's/--tarball=//'`
+      TARBALL=$arg_value
       local TARBALL_DIR=`dirname $TAREBALL`
       if [ ${TARBALL_DIR:0:1}` = / ]; then
 	TARBALL=`pwd`/$TARBALL
@@ -528,7 +529,7 @@ for arg do
       esac
       ;;
     --debootstrap=*)
-      USER_DEBOOTSTRAP=`echo $1 | sed 's/--debootstrap=//'`
+      USER_DEBOOTSTRAP=$arg_value
       ;;
     --force-purify)
       FORCE_PURIFY=yes
@@ -544,7 +545,7 @@ for arg do
       usage
       ;;
     *)
-      error 0 "Unrecognized '$arg' option."
+      error 0 "Unrecognized '$arg' option or value for option not specified."
       usage
       ;;
   esac
