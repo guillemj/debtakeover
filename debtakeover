@@ -593,9 +593,10 @@ fi
 
 debian_preconfigure
 distro_trash
-debian_configure
 
 # Pure Debian system
+
+debian_configure
 
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
 log "-> $PROGRAM finished on `date -Iseconds | tr 'T' ' '`"
