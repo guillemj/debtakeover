@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.36 2003/11/01 20:39:29 guillem Exp $
+# $Id: debtakeover,v 1.37 2003/11/01 22:14:24 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_SUITE=woody
+DEFAULT_PROFILE=colo
 
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
@@ -80,34 +81,6 @@ usage()
 {
   echo "usage: $PROGRAM <suite> <options>"
   echo "otpions: --verbose | --version | --help"
-  exit 0
-}
-
-setup_chroot()
-{
-  mount /proc
-
-  sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
-    < /etc/defaults/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/defaults/
-
-  rm -f /var/lib/apt/lists/*_{Sources,Packages,Release}
-  rm -f /var/cache/apt/{*.bin,archives/*.deb}
-
-  if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
-    mv -f /sbin/halt /sbin/reboot
-    rm /etc/rc0.d/S90halt
-    rm /etc/rc1.d/*
-    cp /etc/rc6.d/S90reboot /etc/rc0.d
-    cp /etc/rc2.d/* /etc/rc1.d
-
-    rmdir /cdrom /floppy
-  fi
-
-  rm -rf /dev
-  update-inetd --multi --disable discard,daytime,time
-
-  umount /proc
-
   exit 0
 }
 
@@ -191,8 +164,12 @@ debian_tarball()
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian | logpipe
 
-  echo "-> Setting up the Debian chroot"
+  echo "-> Removing unneeded files"
+  rm -f $DEBIAN_DIR/var/lib/apt/lists/*_{Sources,Packages,Release}
+  rm -f $DEBIAN_DIR/var/cache/apt/{*.bin,archives/*.deb}
+  rm -rf $DEBIAN_DIR/dev
 
+  echo "-> Setting up APT sources.list"
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
   deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
   deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
@@ -202,9 +179,6 @@ debian_tarball()
   deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
   deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
-
-  cp $0 $DEBIAN_DIR/tmp/
-  chroot $DEBIAN_DIR/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
 
   echo "-> Generating exclusion file list"
   ( for f in ${REMOVE_EXCLUDES}; do
@@ -310,14 +284,26 @@ debian_configure()
   if [ ! -f /etc/hostname ]; then
     hostname -s > /etc/hostname
   fi
+  update-inetd --multi --disable discard,daytime,time
 
-  # TODO: Add a kernel paramater "panic=30"
+  if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
+    echo "-> Setting up specific colo configurations"
+    # TODO: Add a kernel paramater "panic=30"
+
+    sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
+      < /etc/defaults/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/defaults/
+
+    mv -f /sbin/halt /sbin/halt.disabled
+    rm /etc/rc0.d/S??halt
+    cp /etc/rc6.d/S??reboot /etc/rc0.d
+    mv -f /etc/rc1.d /etc/rc1.d.disabled
+    ln -s /etc/rc2.d /etc/rc1.d
+
+    rmdir /cdrom /floppy
+  fi
 
   echo "-> Sanitizing user databases"
   update-passwd
-
-  echo "-> Setting up remaining configurations"
-  dpkg --configure -a
 
   echo "-> Setting up module configuration"
   if [ -f /etc/conf.modules ]; then
@@ -327,6 +313,9 @@ debian_configure()
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
   update-modules
+
+  echo "-> Setting up remaining configurations"
+  dpkg --configure -a
 }
 
 debian_dump()
@@ -380,9 +369,6 @@ fi
 
 for args do
   case $args in
-    --chroot)
-      SETUP_CHROOT=yes
-      ;;
     --verbose)
       VERBOSE=yes
       ;;
@@ -412,12 +398,7 @@ DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
 DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
 DEBIAN_DIR=$DEBIAN_VERSION-chroot
 
-# Special case to setup the chroot
-
-if [ "$SETUP_CHROOT" = "yes" ]; then
-  setup_chroot
-  exit 0
-fi
+DEBTAKEOVER_PROFILE=$DEFAULT_PROFILE
 
 # Pure non-Debian system
 
