@@ -336,6 +336,28 @@ setup_network_none()
   warning "Distro $DISTRO does not have yet a network conversion scripts."
 }
 
+debian_preconfigure()
+{
+  msg "Stage (PreConfiguring)"
+  msg "-----"
+
+  msg "-> Preserving $DISTRO network configuration"
+  mkdir -p /etc/network
+  setup_network_${NETWORK_TYPE} > /etc/network/interfaces
+  if [ ! -f /etc/hostname ]; then
+    hostname -s > /etc/hostname
+  fi
+
+  msg "-> Preserving $DISTRO module configuration"
+  if [ -f /etc/conf.modules ]; then
+    cat /etc/conf.modules >> /etc/modutils/$DISTRO
+  fi
+  if [ -f /etc/modules.conf ] &&
+       ! grep update-modules /etc/modules.conf &> /dev/null; then
+    cat /etc/modules.conf >> /etc/modutils/$DISTRO
+  fi
+}
+
 debian_configure()
 {
   msg "Stage (Configuring)"
@@ -352,12 +374,7 @@ debian_configure()
     cd -
   fi
 
-  msg "-> Setting up network"
-  mkdir -p /etc/network
-  setup_network_${NETWORK_TYPE} > /etc/network/interfaces
-  if [ ! -f /etc/hostname ]; then
-    hostname -s > /etc/hostname
-  fi
+  msg "-> Disabling unneeded network services"
   update-inetd --multi --disable discard,daytime,time
 
   if [ "$DEBTAKEOVER_PROFILE" = colo  ]; then
@@ -375,13 +392,6 @@ debian_configure()
   fi
 
   msg "-> Setting up module configurations"
-  if [ -f /etc/conf.modules ]; then
-    cat /etc/conf.modules >> /etc/modutils/$DISTRO
-  fi
-  if [ -f /etc/modules.conf ] &&
-       ! grep update-modules /etc/modules.conf &> /dev/null; then
-    cat /etc/modules.conf >> /etc/modutils/$DISTRO
-  fi
   if [ ! -f /etc/modules ]; then
     > /etc/modules
   fi
@@ -563,8 +573,9 @@ fi
 
 # Mixed system
 
-debian_configure
+debian_preconfigure
 distro_trash
+debian_configure
 
 # Pure Debian system
 
