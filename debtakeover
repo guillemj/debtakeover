@@ -283,9 +283,15 @@ setup_network_redhat()
     . $f
 
     [ "$ONBOOT" = "yes"  ] && echo "auto $DEVICE"
-    [ -z "$BOOTPROTO" ] && BOOTPROTO=static
-    echo "iface $DEVICE inet $BOOTPROTO"
-    if [ "$DEVICE" != "lo" ]; then
+    if [ -z "$BOOTPROTO" -o "$BOOTPROTO" = "static" ]; then
+      NET_METHOD=static
+    elif [ "$DEVICE" = "lo" ]; then
+      NET_METHOD=loopback
+    else
+      NET_METHOD=$BOOTPROTO
+    fi
+    echo "iface $DEVICE inet $NET_METHOD"
+    if [ "$NET_METHOD" = "static" ]; then
       [ -n "$IPADDR" ] && echo "  address $IPADDR"
       [ -n "$BRADCAST" ] && echo "  broadcast $BROADCAST"
       [ -n "$NETMASK" ] && echo "  netmask $NETMASK"
