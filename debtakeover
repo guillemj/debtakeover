@@ -283,11 +283,13 @@ setup_network_redhat()
     [ "$ONBOOT" = "yes"  ] && echo "auto $DEVICE"
     [ -n "$BOOTPROTO" ] && BOOTPROTO=static
     echo "iface $DEVICE inet $BOOTPROTO"
-    [ -n "$IPADDR" ] && echo "  address $IPADDR"
-    [ -n "$BRADCAST" ] && echo "  broadcast $BROADCAST"
-    [ -n "$NETMASK" ] && echo "  netmask $NETMASK"
-    [ -n "$NETWORK" ] && echo "  network $NETWORK"
-    [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
+    if [ "$DEVICE" != "lo" ]; then
+      [ -n "$IPADDR" ] && echo "  address $IPADDR"
+      [ -n "$BRADCAST" ] && echo "  broadcast $BROADCAST"
+      [ -n "$NETMASK" ] && echo "  netmask $NETMASK"
+      [ -n "$NETWORK" ] && echo "  network $NETWORK"
+      [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
+    fi
     echo
   done
 }
