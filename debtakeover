@@ -330,13 +330,7 @@ debian_configure()
     sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
       < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
 
-    if [ -h /sbin/reboot ];
-    then
-      local LN_REBOOT=`readlink /sbin/reboot`
-      rm -f /sbin/reboot
-      ( cd /sbin; cp -f $LN_REBOOT reboot; )
-    fi
-    mv -f /sbin/halt /sbin/halt.disabled
+    msg "-> Converting halt to behave as reboot"
     rm /etc/rc0.d/S??halt
     cp -d /etc/rc6.d/S??reboot /etc/rc0.d
     mv -f /etc/rc1.d /etc/rc1.d.disabled
