@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.26 2003/10/29 06:21:41 guillem Exp $
+# $Id: debtakeover,v 1.27 2003/10/29 06:28:47 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -226,6 +226,7 @@ distro_remove_list()
   echo "Stage (Building the remove list)"
   echo "-----"
 
+  echo "-> Generating distro files list"
   find / \
     -path '/boot' -prune \
     -o -path '/tmp' -prune \
@@ -239,6 +240,8 @@ distro_remove_list()
     -o -path '/usr/local' -prune \
     -o -path '/lib/modules' -prune \
     -o -print | sort > ~/debianize-$DISTRO.list
+
+  echo "-> Generating distro files removal list"
   diff -u ~/debianize-$DISTRO.list ~/debianize-debian.list | tail +2 | \
     grep '^-' | sed -e 's,^-,,' > ~/debianize-remove.list
 }
