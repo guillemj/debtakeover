@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.34 2003/11/01 18:42:28 guillem Exp $
+# $Id: debtakeover,v 1.35 2003/11/01 19:58:02 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -307,6 +307,9 @@ debian_configure()
 
   echo "-> Setting up network"
   setup_network_${DISTRO} > /etc/network/interfaces
+  if [ ! -f /etc/hostname ]; then
+    hostname -s > /etc/hostname
+  fi
 
   # TODO: Add a kernel paramater "panic=30"
 
