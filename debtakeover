@@ -93,6 +93,7 @@ usage()
 	    --profile=string	Installation profile (default "$DEFAULT_PROFILE")
 	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
+	    --tarball=file	Debian base tarball (default "$DEFAULT_TARBALL")
 	    --verbose		Be more verbose
 	    --version		Print program version
 	    --help		Print this help
@@ -213,7 +214,7 @@ EOF
 
   msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
-    tar cf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 \
+    tar cf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
       -X $WORKDIR/debianize-tar-exclude.list * )
 
   msg "-> Cleaning Debian chroot"
@@ -347,8 +348,8 @@ debian_dump()
   find / $STD_FIND_EXCLUDES -type l -xtype d -print | xargs rm -f || true
 
   msg "-> Dumping Debian over $DISTRO"
-  tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner \
-    -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
+  tar xvf $WORKDIR/$DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
+    -p -U -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
 
   msg "-> Regenerating linker configuration"
   ldconfig
@@ -383,6 +384,7 @@ VERSION=0.3
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_SUITE=woody
+DEFAULT_TARBALL=debian-$DEFAULT_SUITE.tar.bz2
 DEFAULT_PROFILE=colo
 
 # Process command line arguments
@@ -400,6 +402,23 @@ for args do
       ;;
     --suite=*)
       SUITE=`echo $1 | sed 's/--suite=//'`
+      ;;
+    --tarball=*)
+      TARBALL=`echo $1 | sed 's/--tarball=//'`
+      case $TARBALL in
+	*.tar.gz|*.tgz)
+	  TARBALL_COMPRESSOR=--gzip
+	;;
+	*.tar.bz2)
+	  TARBALL_COMPRESSOR=--bzip2
+	;;
+	*.tar.Z|*.taz)
+	  TARBALL_COMPRESSOR=--compress
+	;;
+	*)
+	  error 10 "Tarball extension not recognized."
+	;;
+      esac
       ;;
     --version)
       echo "$PROGRAM $VERSION"
@@ -425,8 +444,9 @@ DISTRO_MIXED=no
 
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
-DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
-DEBIAN_DIR=$DEBIAN_VERSION-chroot
+DEBIAN_TARBALL=${TARBALL:-debian-$DEBIAN_VERSION.tar.bz2}
+DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---bzip2}
+DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
