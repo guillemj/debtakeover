@@ -262,6 +262,7 @@ distro_remove_list()
     -o -path '/var/log' -prune \
     -o -path '/var/local' -prune \
     -o -path '/usr/local' -prune \
+    -o -path '/usr/src' -prune \
     -o -path '/lib/modules' -prune \
     -o -print | sort > $WORKDIR/debianize-$DISTRO.list
 
@@ -430,7 +431,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.5
+VERSION=0.5.1
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
