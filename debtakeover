@@ -216,11 +216,11 @@ debian_tarball_build()
 
   msg "-> Setting up APT sources.list"
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
-	deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
+	deb $DEBIAN_MIRROR_SECURITY/ $DEBIAN_VERSION/updates main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 	deb $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 
-	deb-src $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
+	deb-src $DEBIAN_MIRROR_SECURITY/ $DEBIAN_VERSION/updates main
 	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 	deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
@@ -415,6 +415,7 @@ PROGRAM=debtakeover
 VERSION=0.3
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
+DEFAULT_MIRROR_SECURITY=http://security.debian.org
 DEFAULT_SUITE=woody
 DEFAULT_TARBALL=debian-$DEFAULT_SUITE.tar.bz2
 DEFAULT_PROFILE=colo
@@ -478,6 +479,7 @@ DISTRO=unknown
 DISTRO_MIXED=no
 
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
+DEBIAN_MIRROR_SECURITY=${MIRROR_SECURITY:-$DEFAULT_MIRROR_SECURITY}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
 DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.bz2}
 DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---bzip2}
