@@ -334,6 +334,9 @@ debian_configure()
   msg "Stage (Configuring)"
   msg "-----"
 
+  msg "-> Sanitizing user databases"
+  update-passwd
+
   if [ ! -e /dev/.devfsd ]; then
     msg "-> Updating device nodes"
     cd /dev
@@ -364,9 +367,6 @@ debian_configure()
 
     rmdir /cdrom /floppy
   fi
-
-  msg "-> Sanitizing user databases"
-  update-passwd
 
   msg "-> Setting up module configurations"
   if [ -f /etc/conf.modules ]; then
@@ -439,7 +439,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.6.1
+VERSION=0.6.2
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
