@@ -323,7 +323,7 @@ debian_configure()
   if [ -f /etc/modules.conf ]; then
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
-  update-modules
+  update-modules force
 
   msg "-> Setting up remaining configurations"
   dpkg --configure -a
