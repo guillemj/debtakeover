@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.21 2003/10/28 22:54:39 guillem Exp $
+# $Id: debtakeover,v 1.22 2003/10/29 05:50:37 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -101,6 +101,30 @@ setup_chroot()
   umount /proc
 
   exit 0
+}
+
+check_needed()
+{
+  echo "Stage (Checking for needed components)"
+  echo "-----"
+
+  DEBOOTSTRAP_NEEDED="wget ar"
+  DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
+
+  for bin in $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
+    echo -n "-> Checking for $bin ... "
+    if which $bin >& /dev/null; then
+      echo "found."
+    else
+      echo "missing."
+      CHECK_ERROR="Please install missing software and try again."
+    fi
+  done
+
+  if [ -n "$CHECK_ERROR" ]; then
+    error "$CHECK_ERROR"
+    exit 2
+  fi
 }
 
 distro_detect()
@@ -359,15 +383,19 @@ if [ "$SETUP_CHROOT" = "yes" ]; then
 fi
 
 # Pure non-Debian system
+check_needed
 distro_detect
+
 if [ "$DISTRO_MIXED" = "no" ]; then
   debian_tarball
   distro_remove_list
   debian_dump
 fi
+
 # Mixed system
 debian_configure
 distro_trash
+
 # Pure Debian system
 
 exit 0
