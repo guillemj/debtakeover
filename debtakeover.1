@@ -1,0 +1,61 @@
+.TH DEBTAKEOVER 1 2004-04-19 0.7 "debtakeover manual"
+.\"
+.\" $Id$
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+debtakeover \- replace in runtime a system to Debian
+.SH SYNOPSIS
+.B debtakeover
+.RI [ options ]
+.SH DESCRIPTION
+The \fBdebtakeover\fP utility is used to replace the current running system to
+Debian. Its main purpose is to be used on a colocated server, where you do not
+have physical access to the host.
+.SH OPTIONS
+.TP
+.B \-\-profile=string
+Installation profile (default "colo"). Set it to "none" to disable.
+.TP
+.B \-\-suite=string
+Debian suite (default "woody").
+.TP
+.B \-\-mirror=url
+Debian mirror (default "http://ftp.no.debian.org/").
+.TP
+.B \-\-tarball=file
+Debian base tarball (default "debian-woody.tar.bz2"). It supports compressed
+tarballs with gzip, bzip2 and compress.
+.TP
+.B \-\-debootstrap=path
+Debootstrap compatible binary (default "debootstrap"). Other alternatives that
+may not work are \fBcdebootstrap\fP and \fBcrosshurd\fP.
+.TP
+.B \-\-force-purify
+Force the purification (non-interactive). Do not ask for confirmation.
+.TP
+.B \-\-force-retakeover
+Force taking over a Debian system. Useful when converting derived Debian
+distros or to reinstall a system from scratch.
+.TP
+.B \-\-verbose
+Be more verbose.
+.TP
+.B \-\-version
+Print program version.
+.TP
+.B \-\-help
+Print this help.
+.SH SEE ALSO
+.BR debootstrap (1).
+.SH AUTHOR
+This manual page was written by Guillem Jover <guillem@debian.org>.
