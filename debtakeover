@@ -277,7 +277,7 @@ distro_remove_list()
   msg "Stage (Building the remove list)"
   msg "-----"
 
-  msg "-> Generating distro files list"
+  msg "-> Generating $DISTRO distro files list"
   find / \
     $STD_FIND_EXCLUDES \
        -path '/boot' -prune \
@@ -289,7 +289,7 @@ distro_remove_list()
     -o -path '/lib/modules' -prune \
     -o -print | sort > $WORKDIR/debianize-$DISTRO.list
 
-  msg "-> Generating distro files removal list"
+  msg "-> Generating $DISTRO distro files removal list"
   diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list \
     | tail +2 | grep '^-' | sed -e 's,^-,,' \
     | grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
