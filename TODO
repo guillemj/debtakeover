@@ -1,0 +1,9 @@
+
+	$Id$
+
+TODO list
+=========
+
+ - implement other distro network setup converters
+ - create a rpm, ebuild, slackware, bsd port.
+

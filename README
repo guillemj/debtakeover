@@ -1,0 +1,42 @@
+Migrating a running distro to Debian
+====================================
+
+  $Id$
+
+  Copyright (C) 2003  Guillem Jover <guillem@debian.org>
+  Distributed subject to the GNU General Public License, version 2.
+
+Introduction
+------------
+
+This document was created to help migrating a colo server. So it has been
+used in the real world. The previous content that could be found here, was
+non functional, only some initial notes I toke when doing the process by
+hand. It has been converted since this summer into a proper scripts.
+One thing that must be understood is that the script is not going to
+convert the whole system to Debian, it will install a clean base system
+keeping some configurations, but will not map all previous installed programs
+to the Debian counterparts. It should preserve user data and backups of
+old system configuration, though. The new system is a clean Debian system,
+it's not a chroot, and no traces from the old distro should keep around,
+but backups.
+
+The final intention is to create a wide framework to convert anything to
+Debian. The program is named debtakeover.
+
+Implementation
+--------------
+
+Currently the script is in beta testing stage, I didn't wanted to release
+a broken program that has to do such a critical operation, although by making
+the initial draft public I did precisely this, sorry to anyone who has used
+this previous inmature draft. I've tested the current script on a RedHat and
+on a SuSE. It has some provisions now to be extended to any GNU/Linux
+distribution. Next step will be to do cross-installs from for example a
+FreeBSD to a Debian GNU/KFreeBSD or a GNU/Linux system.
+
+Current implementation can be found on:
+
+	<http://www.hadrons.org/~guillem/debian/debtakeover/>
+
+
