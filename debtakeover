@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.27 2003/10/29 06:28:47 guillem Exp $
+# $Id: debtakeover,v 1.28 2003/11/01 01:07:42 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 
-ETC_EXCLUDES="mtab fstab hostname hosts resolv.conf lilo.conf modules
-        modules.conf ssh/ssh_host_*"
+REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
+        /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
+        /etc/ssh/ssh_host_*"
 
 DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
@@ -86,7 +87,7 @@ setup_chroot()
   sed -e 's/^FSCKFIX=no/FSCKFIX=yes/;s/^TMPTIME=0/TMPTIME=15/' \
     < /etc/defaults/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/defaults/
 
-  for f in $ETC_EXCLUDES; do
+  for f in $REMOVE_EXCLUDES; do
     rm -f /etc/$f
   done
 
@@ -241,9 +242,15 @@ distro_remove_list()
     -o -path '/lib/modules' -prune \
     -o -print | sort > ~/debianize-$DISTRO.list
 
+  echo "-> Generating exclusion file list"
+  ( for f in ${REMOVE_EXCLUDES}; do
+    echo $f
+  done ) > ~/debianize-exclude.list
+
   echo "-> Generating distro files removal list"
   diff -u ~/debianize-$DISTRO.list ~/debianize-debian.list | tail +2 | \
-    grep '^-' | sed -e 's,^-,,' > ~/debianize-remove.list
+    grep '^-' | sed -e 's,^-,,' | grep -vxf ~/debianize-exclude.list \
+    > ~/debianize-remove.list
 }
 
 setup_network_redhat()
