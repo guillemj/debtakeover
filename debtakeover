@@ -283,7 +283,7 @@ setup_network_redhat()
     . $f
 
     [ "$ONBOOT" = "yes"  ] && echo "auto $DEVICE"
-    [ -n "$BOOTPROTO" ] && BOOTPROTO=static
+    [ -z "$BOOTPROTO" ] && BOOTPROTO=static
     echo "iface $DEVICE inet $BOOTPROTO"
     if [ "$DEVICE" != "lo" ]; then
       [ -n "$IPADDR" ] && echo "  address $IPADDR"
