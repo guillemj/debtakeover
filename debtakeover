@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.12 2003/10/26 23:23:52 guillem Exp $
+# $Id: debtakeover,v 1.13 2003/10/27 03:39:17 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ debian_dump()
   tar czvf ~/$DISTRO-log.tgz /var/log
 
   echo "-> dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner || true
 
   ldconfig
   hash -r
