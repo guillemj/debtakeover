@@ -175,7 +175,39 @@ distro_detect()
   # Set default redhat style network conf dir.
   NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
 
-  if [ -e /etc/mandrake-release ]; then
+  if [ -e /etc/ark-release ]; then
+    # Provides mandrake and redhat release files
+    DISTRO=arklinux
+  elif [ -e /etc/altlinux-release ]; then
+    # Provides mandrake and redhat release files
+    DISTRO=altlinux
+  elif [ -e /etc/lvr-release ]; then
+    DISTRO=lvr
+  elif [ -e /etc/caos-release ]; then
+    DISTRO=caos
+  elif [ -e /etc/magic-release ]; then
+    DISTRO=magiclinux
+  elif [ -e /etc/asplinux-release ]; then
+    # Provides redhat release file
+    DISTRO=asplinux
+  elif [ -e /etc/aurox-release ]; then
+    # Provides redhat release file
+    DISTRO=aurox
+  elif [ -e /etc/engarde-release ]; then
+    # Provides redhat release file
+    DISTRO=engarde
+  elif [ -e /etc/whitebox-release ]; then
+    # Provides redhat release file
+    DISTRO=whitebox
+  elif [ -e /etc/pld-release ]; then
+    DISTRO=pld
+  elif [ -e /etc/startcom-release ]; then
+    DISTRO=startcom
+  elif [ -e /etc/trustix-release ]; then
+    DISTRO=trustix
+  elif [ -e /etc/conectiva-release ]; then
+    DISTRO=conectiva
+  elif [ -e /etc/mandrake-release ]; then
     DISTRO=mandrake
     NETWORK_TYPE=redhat
   elif [ -e /etc/fedora-release ]; then

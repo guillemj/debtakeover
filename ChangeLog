@@ -1,5 +1,11 @@
 2004-12-11  Guillem Jover  <guillem@debian.org>
 
+	* debtakeover (distro_detect): Add ArkLinux, ASPLinux, AltLinux,
+	PLD, WhiteBox, Conectiva, Trustix, StartCom, MagicLinux, Aurox,
+	EnGarde, cAos, LvR distro detection.
+
+2004-12-11  Guillem Jover  <guillem@debian.org>
+
 	* debtakeover (distro_detect): Reindent "then" keywords. Add missing
 	one for LSB entry.
 
