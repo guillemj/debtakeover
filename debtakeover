@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.31 2003/11/01 07:54:19 guillem Exp $
+# $Id: debtakeover,v 1.32 2003/11/01 08:04:33 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 #
 
+
 #
 # User modifiable variables
 #
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
+DEFAULT_SUITE=woody
 
 REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
@@ -76,7 +78,7 @@ error()
 usage()
 {
   echo "usage: $PROGRAM <suite> <options>"
-  echo "otpions: --verbose"
+  echo "otpions: --verbose | --version"
   exit
 }
 
@@ -358,6 +360,7 @@ distro_trash()
   echo "reboot when done."
 }
 
+
 #
 # Main program
 #
@@ -367,23 +370,12 @@ export LC_ALL=C
 PROGRAM=debtakeover
 VERSION=0.1
 
+# Process command line arguments
+
 if test $# = 0
 then
   usage
 fi
-
-# Initialize some variables
-
-LOGFILE=$PROGRAM.log
-
-DISTRO=unknown
-DISTRO_MIXED=no
-
-DEBIAN_MIRROR=$DEFAULT_MIRROR
-DEBIAN_VERSION=$1
-DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
-DEBIAN_DIR=$DEBIAN_VERSION-chroot
-shift
 
 for args do
   case $args in
@@ -395,14 +387,28 @@ for args do
       ;;
     --version)
       echo "$PROGRAM $VERSION"
+      exit 0
       ;;
     *)
-      error 0 "Unrecognized option."
-      usage
+      SUITE=$1
       ;;
   esac
   shift
 done
+
+# Initialize some variables
+
+LOGFILE=$PROGRAM.log
+
+DISTRO=unknown
+DISTRO_MIXED=no
+
+DEBIAN_MIRROR=$DEFAULT_MIRROR
+DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
+DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
+DEBIAN_DIR=$DEBIAN_VERSION-chroot
+
+# Special case to setup the chroot
 
 if [ "$SETUP_CHROOT" = "yes" ]; then
   setup_chroot
@@ -410,6 +416,7 @@ if [ "$SETUP_CHROOT" = "yes" ]; then
 fi
 
 # Pure non-Debian system
+
 check_needed
 distro_detect
 
@@ -420,6 +427,7 @@ if [ "$DISTRO_MIXED" = "no" ]; then
 fi
 
 # Mixed system
+
 debian_configure
 distro_trash
 
