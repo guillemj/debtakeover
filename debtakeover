@@ -90,7 +90,7 @@ usage()
 	    --profile=string	Installation profile (default "$DEFAULT_PROFILE")
 	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
-	    --tarball=file	Debian base tarball (default "$DEFAULT_TARBALL")
+	    --tarball=file	Debian base tarball
 	    --debootstrap=path	Debootstrap compatible binary (default "$DEFAULT_DEBOOTSTRAP")
 	    --force-purify	Force the purification (non-interactive)
 	    --force-retakeover	Force taking over a Debian system
@@ -484,7 +484,6 @@ BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
 DEFAULT_SUITE=woody
-DEFAULT_TARBALL=debian-$DEFAULT_SUITE.tar.bz2
 DEFAULT_PROFILE=colo
 DEFAULT_DEBOOTSTRAP=debootstrap
 
@@ -506,6 +505,13 @@ for args do
       ;;
     --tarball=*)
       TARBALL=`echo $1 | sed 's/--tarball=//'`
+      local TARBALL_DIR=`dirname $TAREBALL`
+      if [ ${TARBALL_DIR:0:1}` = / ]; then
+	TARBALL=`pwd`/$TARBALL
+      fi
+      if [ ! -e $TARBALL ]; then
+	error 11 "Tarball does not exist."
+      fi
       case $TARBALL in
 	*.tar.gz|*.tgz)
 	  TARBALL_COMPRESSOR=--gzip
@@ -589,7 +595,7 @@ check_needed
 
 if [ "$DISTRO_MIXED" = no ]; then
   generic_exclusion_list
-  if [ "$TARBALL" -a -e "$TARBALL" ]; then
+  if [ "$TARBALL" ]; then
     debian_tarball_prebuilt
   else
     debian_tarball_build
