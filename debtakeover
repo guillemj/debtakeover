@@ -82,24 +82,24 @@ sigerror()
 
 usage()
 {
-  cat <<-HERE
-	usage: $PROGRAM [options]
-	
-	options:
-	
-	    --profile=string	Installation profile (default "$DEFAULT_PROFILE")
-	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
-	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
-	    --tarball=file	Debian base tarball
-	    --debootstrap=path	Debootstrap compatible binary (default "$DEFAULT_DEBOOTSTRAP")
-	    --debootstrap-args=string
-				Debootstrap extra arguments
-	    --force-purify	Force the purification (non-interactive)
-	    --force-retakeover	Force taking over a Debian system
-	    --verbose		Be more verbose
-	    --version		Print program version
-	    --help		Print this help
-	
+  cat <<HERE
+usage: $PROGRAM [options]
+
+options:
+
+    --profile=string	Installation profile (default "$DEFAULT_PROFILE")
+    --suite=string	Debian suite (default "$DEFAULT_SUITE")
+    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
+    --tarball=file	Debian base tarball
+    --debootstrap=path	Debootstrap compatible binary (default "$DEFAULT_DEBOOTSTRAP")
+    --debootstrap-args=string
+			Debootstrap extra arguments
+    --force-purify	Force the purification (non-interactive)
+    --force-retakeover	Force taking over a Debian system
+    --verbose		Be more verbose
+    --version		Print program version
+    --help		Print this help
+
 HERE
   exit 0
 }
