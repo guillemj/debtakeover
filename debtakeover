@@ -346,9 +346,6 @@ debian_dump()
   msg "-> Dumping Debian over $DISTRO"
   tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner \
     -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
-
-  hash -r
-  ldconfig
 }
 
 distro_trash()
@@ -360,8 +357,6 @@ distro_trash()
     | logpipe || true
   cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null \
     | logpipe || true
-
-  hash -r
 }
 
 
@@ -440,6 +435,9 @@ fi
 
 debian_configure
 distro_trash
+
+hash -r
+ldconfig
 
 # Pure Debian system
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
