@@ -276,8 +276,7 @@ EOF
 
   msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
-    tar cf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
-      -X $WORKDIR/debianize-tar-exclude.list * )
+    tar cf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR * )
 
   msg "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR

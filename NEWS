@@ -20,4 +20,5 @@ Version UNRELEASED
  - Fix not found user specified tarball w/o an absolute path.
  - Make argument parsing more robust.
  - Added a signal error handler.
+ - Fix to generate a valid tarball, usable outside debtakeover scope.
 
