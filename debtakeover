@@ -34,7 +34,6 @@ REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
 
 STD_EXCLUDES="/tmp /root /home /opt /dev /proc /sys"
 
-DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
 if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
@@ -94,6 +93,7 @@ usage()
 	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
 	    --tarball=file	Debian base tarball (default "$DEFAULT_TARBALL")
+	    --debootstrap=path	Debootstrap compatible binary (default "$DEFAULT_DEBOOTSTRAP")
 	    --force-purify	Force the purification (non-interactive)
 	    --force-retakeover	Force taking over a Debian system
 	    --verbose		Be more verbose
@@ -446,6 +446,7 @@ DEFAULT_MIRROR_SECURITY=http://security.debian.org
 DEFAULT_SUITE=woody
 DEFAULT_TARBALL=debian-$DEFAULT_SUITE.tar.bz2
 DEFAULT_PROFILE=colo
+DEFAULT_DEBOOTSTRAP=./debootstrap
 
 # Process command line arguments
 
@@ -479,6 +480,9 @@ for args do
 	  error 10 "Tarball extension not recognized."
 	;;
       esac
+      ;;
+    --debootstrap=*)
+      USER_DEBOOTSTRAP=`echo $1 | sed 's/--debootstrap=//'`
       ;;
     --force-purify)
       FORCE_PURIFY=yes
@@ -515,6 +519,8 @@ DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
 DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.bz2}
 DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---bzip2}
 DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
+
+DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
