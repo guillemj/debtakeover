@@ -118,10 +118,12 @@ check_needed()
     error 4 "You need superuser privileges to run this program."
   fi
 
-  local DEBOOTSTRAP_NEEDED="wget ar"
+  if [ -z "$TARBALL" ]; then
+    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar"
+  fi
   local DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
 
-  for bin in $DEBOOTSTRAP $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
+  for bin in $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
     check_print "$bin"
     if which $bin >& /dev/null; then
       msg "found."
