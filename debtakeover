@@ -112,7 +112,7 @@ check_needed()
   fi
 
   if [ -z "$TARBALL" ]; then
-    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar"
+    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar MAKEDEV"
   fi
   local DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
 
