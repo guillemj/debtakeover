@@ -492,7 +492,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.7
+VERSION=0.8
 BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
