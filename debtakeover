@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.44 2003/11/06 11:12:04 guillem Exp $
+# $Id: debtakeover,v 1.45 2003/11/06 14:19:10 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -31,6 +31,14 @@ REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
         /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
         /etc/passwd /etc/shadow /etc/group /etc/gshadow
         /etc/ssh/ssh_host_*"
+
+STD_FIND_EXCLUDES="\
+        -path '/tmp' -prune -o \
+        -path '/root' -prune -o \
+        -path '/home' -prune -o \
+        -path '/dev' -prune -o \
+        -path '/proc' -prune -o \
+        -path '/sys' -prune"
 
 DEBOOTSTRAP=./debootstrap
 DEBOOTSTRAP_INCLUDES="ssh,grub,libssl0.9.6,zlib1g"
@@ -191,8 +199,7 @@ EOF
   echo "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
     find . \
-      -path '/dev' -prune \
-      -o -path '/proc' -prune \
+      $STD_FIND_EXCLUDES \
       -o -print ) | sed -e 's,^\.,,' | sort > ~/debianize-debian.list
 
   echo "-> Packaging Debian chroot"
@@ -210,12 +217,8 @@ distro_remove_list()
 
   echo "-> Generating distro files list"
   find / \
-    -path '/boot' -prune \
-    -o -path '/tmp' -prune \
-    -o -path '/dev' -prune \
-    -o -path '/proc' -prune \
-    -o -path '/root' -prune \
-    -o -path '/home' -prune \
+    $STD_FIND_EXCLUDES \
+    -o -path '/boot' -prune \
     -o -path '/var/run' -prune \
     -o -path '/var/log' -prune \
     -o -path '/var/local' -prune \
@@ -322,7 +325,7 @@ debian_dump()
   tar czvf ~/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   echo "-> Removing symlinks to directories"
-  find -type l -xtype d | xargs rm -f
+  find / $STD_FIND_EXCLUDES -o -type l -xtype d | xargs rm -f || true
 
   echo "-> Dumping Debian over $DISTRO"
   tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
