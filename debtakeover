@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.45 2003/11/06 14:19:10 guillem Exp $
+# $Id: debtakeover,v 1.46 2003/11/06 14:27:42 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -49,6 +49,7 @@ else
   DEBOOTSTRAP_EXCLUDES=""
 fi
 
+WORKDIR=~
 
 #
 # Function definitions
@@ -194,17 +195,18 @@ EOF
   echo "-> Generating exclusion file list"
   ( for f in ${REMOVE_EXCLUDES}; do
     echo $f
-  done ) > ~/debianize-exclude.list
+  done ) > $WORKDIR/debianize-exclude.list
 
   echo "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
     find . \
       $STD_FIND_EXCLUDES \
-      -o -print ) | sed -e 's,^\.,,' | sort > ~/debianize-debian.list
+      -o -print ) | sed -e 's,^\.,,' | sort > $WORKDIR/debianize-debian.list
 
   echo "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
-    tar cf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -X ~/debianize-exclude.list * )
+    tar cf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 \
+      -X $WORKDIR/debianize-exclude.list * )
 
   echo "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR
@@ -224,12 +226,12 @@ distro_remove_list()
     -o -path '/var/local' -prune \
     -o -path '/usr/local' -prune \
     -o -path '/lib/modules' -prune \
-    -o -print | sort > ~/debianize-$DISTRO.list
+    -o -print | sort > $WORKDIR/debianize-$DISTRO.list
 
   echo "-> Generating distro files removal list"
-  diff -u ~/debianize-$DISTRO.list ~/debianize-debian.list | tail +2 | \
-    grep '^-' | sed -e 's,^-,,' | grep -vxf ~/debianize-exclude.list \
-    > ~/debianize-remove.list
+  diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list | \
+    tail +2 | grep '^-' | sed -e 's,^-,,' | \
+    grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
 }
 
 setup_network_redhat()
@@ -321,14 +323,14 @@ debian_dump()
   cd /
 
   echo "-> Making backups of important data"
-  tar czvf ~/$DISTRO-etc.tgz /etc 2>&1 | logpipe
-  tar czvf ~/$DISTRO-log.tgz /var/log 2>&1 | logpipe
+  tar czvf $WORKDIR/$DISTRO-etc.tgz /etc 2>&1 | logpipe
+  tar czvf $WORKDIR/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   echo "-> Removing symlinks to directories"
   find / $STD_FIND_EXCLUDES -o -type l -xtype d | xargs rm -f || true
 
   echo "-> Dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
+  tar xvf $WORKDIR/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner 2>&1 \
     | logpipe || true
 
   hash -r
@@ -340,8 +342,10 @@ distro_trash()
   echo "Stage (Trash the old system)"
   echo "-----"
 
-  cat ~/debianize-remove.list | xargs rm -f 2> /dev/null | logpipe || true
-  cat ~/debianize-remove.list | xargs rmdir -p 2> /dev/null | logpipe || true
+  cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null | \
+    logpipe || true
+  cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null | \
+    logpipe || true
 
   hash -r
 }
@@ -393,7 +397,7 @@ done
 
 # Initialize some variables
 
-LOGFILE=$PROGRAM.log
+LOGFILE=$WORKDIR/$PROGRAM.log
 
 DISTRO=unknown
 DISTRO_MIXED=no
