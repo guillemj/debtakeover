@@ -1,0 +1,16 @@
+Version UNRELEASED
+
+ - Added a man page.
+ - Added a NEWS file.
+ - Updated README: add more successfully migrated distros, spelling fixes.
+ - Preserve /etc/grub.conf on weird distros.
+ - Keep network config when taking over a Debian system.
+ - Check for MAKEDEV existence.
+ - Sanitize distro name output.
+ - Detect more distros: YellowDog, Turbolinux.
+ - Give proper name to all detected distros, even Debian.
+ - Check generated chroot sanity.
+ - Split configuration into pre and post, relative to the trash step.
+ - Make the configure step more robust.
+ - Do not remove /cdrom and /floppy dirs.
+
