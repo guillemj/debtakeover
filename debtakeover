@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.13 2003/10/27 03:39:17 guillem Exp $
+# $Id: debtakeover,v 1.14 2003/10/27 04:13:19 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,23 +20,11 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 #
 
-if test $# = 0
-then
-  echo "usage: $0 <suite> <options>"
-  exit
-fi
+#
+# User modifiable variables
+#
 
-DEBIAN_MIRROR=http://ftp.no.debian.org
-DEBIAN_VERSION=$1
-DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
-DEBIAN_DIR=$DEBIAN_VERSION-chroot
-shift
-
-if [ "$1" = "--chroot" ]
-then
-  SETUP_CHROOT=yes
-  shift
-fi
+DEFAULT_MIRROR=http://ftp.no.debian.org
 
 ETC_EXCLUDES="mtab fstab hostname hosts resolv.conf lilo.conf modules
         modules.conf ssh/ssh_host_*"
@@ -50,7 +38,36 @@ else
   DEBOOTSTRAP_EXCLUDES=""
 fi
 
-DISTRO=unknown
+
+#
+# Function definitions
+#
+
+logpipe()
+{
+  if [ $VERBOSE = yes ]; then
+    tee -a $LOGFILE
+  else
+    cat >> $LOGFILE
+  fi
+}
+
+log()
+{
+  echo -e "$@" | logpipe
+}
+
+error()
+{
+  echo -e "$@" >&2
+}
+
+usage()
+{
+  echo "usage: $PROGRAM <suite> <options>"
+  echo "otpions: --verbose"
+  exit
+}
 
 setup_chroot()
 {
@@ -93,7 +110,7 @@ distro_detect()
 
   if [ -e /etc/debian_version ]
   then
-    echo "You already have a Debian system"
+    error "You already have a Debian system"
     exit 1
   elif [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
          -e /etc/SuSe-release ]
@@ -124,7 +141,7 @@ debian_tarball()
 
   $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
-        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian
+        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian | logpipe
 
   echo "-> Setting up the Debian chroot"
 
@@ -212,13 +229,13 @@ setup_network_gentoo()
 {
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
-    echo "dho!" 2>&1
+    error "warning: gentoo does not have yet a network conversion script."
   done
 }
 
 setup_network_unknown()
 {
-  echo "warning: unknwown distro, don't have network conversion scripts." 2>&1
+  error "warning: unknwown distro, does not have network conversion scripts."
 }
 
 setup_network()
@@ -250,11 +267,12 @@ debian_dump()
   cd /
 
   echo "-> making backups of important data"
-  tar czvf ~/$DISTRO-etc.tgz /etc
-  tar czvf ~/$DISTRO-log.tgz /var/log
+  tar czvf ~/$DISTRO-etc.tgz /etc | logpipe
+  tar czvf ~/$DISTRO-log.tgz /var/log | logpipe
 
   echo "-> dumping Debian over $DISTRO"
-  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner || true
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner | \
+    logpipe || true
 
   ldconfig
   hash -r
@@ -265,8 +283,8 @@ distro_trash()
   echo "Stage (Trash the old system)"
   echo "-----"
 
-  cat ~/debianize-remove.list | xargs rm -f
-  cat ~/debianize-remove.list | xargs rmdir -p
+  cat ~/debianize-remove.list | xargs rm -f | logpipe || true
+  cat ~/debianize-remove.list | xargs rmdir -p | logpipe || true
 
   hash -r
   echo "!!! DANGER WILL ROBINSON !!!"
@@ -274,7 +292,44 @@ distro_trash()
 #  reboot
 }
 
+#
+# Main program
+#
+
 export LC_ALL=C
+
+# Initialize some variables
+
+PROGRAM=debtakeover
+LOGFILE=$PROGRAM.log
+
+DISTRO=unknown
+DEBIAN_MIRROR=
+DEBIAN_VERSION=$1
+DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
+DEBIAN_DIR=$DEBIAN_VERSION-chroot
+shift
+
+if test $# = 0
+then
+  usage
+fi
+
+for args do
+  case $args in
+    --chroot)
+      SETUP_CHROOT=yes
+      ;;
+    --verbose)
+      VERBOSE=yes
+      ;;
+    *)
+      error "error: unrecognized option"
+      usage
+      ;;
+  esac
+  shift
+done
 
 if [ "$SETUP_CHROOT" = "yes" ]; then
   setup_chroot
