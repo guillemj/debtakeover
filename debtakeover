@@ -326,8 +326,8 @@ debian_configure()
   if [ -f /etc/conf.modules ]; then
     cat /etc/conf.modules >> /etc/modutils/$DISTRO
   fi
-  if [ -f /etc/modules.conf ]
-       && ! grep update-modules /etc/modules.conf &> /dev/null; then
+  if [ -f /etc/modules.conf ] &&
+       ! grep update-modules /etc/modules.conf &> /dev/null; then
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
   update-modules force
