@@ -357,6 +357,13 @@ debian_configure()
 
   msg "-> Setting up remaining configurations"
   dpkg --configure -a
+
+  msg "-> Sanitizing root PATH environment variable"
+  cat >> ~/.bash_profile <<-EOF
+	# Begin: automatically added by debtakeover
+	PATH=/sbin:/usr/sbin:/usr/local/sbin:\$PATH
+	# End
+EOF
 }
 
 debian_dump()
