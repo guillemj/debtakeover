@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.25 2003/10/29 06:09:07 guillem Exp $
+# $Id: debtakeover,v 1.26 2003/10/29 06:21:41 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,21 +118,31 @@ check_needed()
   echo "Stage (Checking for needed components)"
   echo "-----"
 
-  DEBOOTSTRAP_NEEDED="wget ar"
-  DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
+  check_print() { echo -n "-> Checking for $@ ... "; }
+
+  check_print "superuser privileges"
+  if [ `id -u` = 0 ]; then
+    echo "ok."
+  else
+    echo "failed."
+    error 4 "You need superuser privileges to run this program."
+  fi
+
+  local DEBOOTSTRAP_NEEDED="wget ar"
+  local DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
 
   for bin in $DEBOOTSTRAP $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
-    echo -n "-> Checking for $bin ... "
+    check_print "$bin"
     if which $bin >& /dev/null; then
       echo "found."
     else
       echo "missing."
-      CHECK_ERROR="Please install missing software and try again."
+      local CHECK_MISSING=yes
     fi
   done
 
-  if [ -n "$CHECK_ERROR" ]; then
-    error 2 "$CHECK_ERROR"
+  if [ "$CHECK_MISSING" = yes ]; then
+    error 2 "Please install missing software and try again."
   fi
 }
 
