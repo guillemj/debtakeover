@@ -13,4 +13,5 @@ Version UNRELEASED
  - Split configuration into pre and post, relative to the trash step.
  - Make the configure step more robust.
  - Do not remove /cdrom and /floppy dirs.
+ - Print version, to trace better user reports.
 

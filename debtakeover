@@ -568,6 +568,7 @@ fi
 
 log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
 
+msg "-> $PROGRAM $VERSION"
 msg "-> Disable bash executable path hashing."
 set +h
 
