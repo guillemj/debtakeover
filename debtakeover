@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.47 2003/11/06 16:41:09 guillem Exp $
+# $Id: debtakeover,v 1.48 2003/11/07 12:38:07 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -86,13 +86,18 @@ error()
 
 usage()
 {
-  echo "usage: $PROGRAM <options>"
-  echo "    --profile=string	(default '$DEFAULT_PROFILE')"
-  echo "    --suite=string	(default '$DEFAULT_SUITE')"
-  echo "    --mirror=url	(default '$DEFAULT_MIRROR')"
-  echo "    --verbose"
-  echo "    --version"
-  echo "    --help"
+  cat <<-HERE
+	usage: $PROGRAM [options]
+	
+	options:
+	
+	    --profile=string	Installation profile (default "$DEFAULT_PROFILE")
+	    --suite=string	Debian suite (default "$DEFAULT_SUITE")
+	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
+	    --verbose		Be more verbose
+	    --version		Print program version
+	    --help		Print this help
+  HERE
   exit 0
 }
 
