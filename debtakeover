@@ -211,11 +211,16 @@ distro_detect()
   elif [ -e /etc/arch-release ]
   then
     DISTRO=archlinux
+  elif [ -e /etc/lsb-release ]
+    . /etc/etc/lsb-release
+
+    # Normalize distro name
+    DISTRO=`echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]'`
   fi
 
   if [ -e /etc/debian_version ]
   then
-    if [ "$DISTRO" = unknown ]; then
+    if [ "$DISTRO" = unknown ] || [ "$DISTRO" = debian ]; then
       if [ "$FORCE_RETAKEOVER" = yes ]; then
         DISTRO=debian
         NETWORK_TYPE=debian
