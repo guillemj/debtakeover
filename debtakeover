@@ -74,6 +74,12 @@ error()
   fi
 }
 
+sigerror()
+{
+  echo "Unexpected error, please report it with full logs it to: "
+  echo "  $BUGS_ADDRESS"
+}
+
 usage()
 {
   cat <<-HERE
@@ -474,6 +480,7 @@ export LC_ALL=C
 
 PROGRAM=debtakeover
 VERSION=0.7
+BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
@@ -574,6 +581,9 @@ log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
 msg "-> $PROGRAM $VERSION"
 msg "-> Disable bash executable path hashing."
 set +h
+
+msg "-> Setting signal handlers."
+trap sigerror ERR
 
 distro_detect
 check_needed
