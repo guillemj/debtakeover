@@ -490,7 +490,7 @@ check_needed
 
 if [ "$DISTRO_MIXED" = "no" ]; then
   generic_exclusion_list
-  if [ "$TARBALL" -a -e "$WORKDIR/$TARBALL" ]; then
+  if [ "$TARBALL" -a -e "$TARBALL" ]; then
     debian_tarball_prebuilt
   else
     debian_tarball_build
