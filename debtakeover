@@ -175,51 +175,40 @@ distro_detect()
   # Set default redhat style network conf dir.
   NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
 
-  if [ -e /etc/mandrake-release ]
-  then
+  if [ -e /etc/mandrake-release ]; then
     DISTRO=mandrake
     NETWORK_TYPE=redhat
-  elif [ -e /etc/fedora-release ]
-  then
+  elif [ -e /etc/fedora-release ]; then
     DISTRO=fedora
     NETWORK_TYPE=redhat
-  elif [ -e /etc/redhat-release ]
-  then
+  elif [ -e /etc/redhat-release ]; then
     DISTRO=redhat
     NETWORK_TYPE=redhat
-  elif [ -e /etc/SuSE-release ]
-  then
+  elif [ -e /etc/SuSE-release ]; then
     DISTRO=suse
     NETWORK_TYPE=redhat
     # SuSE version < 8.0 used /etc/rc.config
     NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network
-  elif [ -e /etc/slackware-version ]
-  then
+  elif [ -e /etc/slackware-version ]; then
     DISTRO=slackware
-  elif [ -e /etc/gentoo-release ]
-  then
+  elif [ -e /etc/gentoo-release ]; then
     DISTRO=gentoo
-  elif [ -e /etc/cobalt-release ]
-  then
+  elif [ -e /etc/cobalt-release ]; then
     DISTRO=cobalt
-  elif [ -e /etc/yellowdog-release ]
-  then
+  elif [ -e /etc/yellowdog-release ]; then
     DISTRO=yellowdog
-  elif [ -e /etc/turbolinux-release ]
-  then
+  elif [ -e /etc/turbolinux-release ]; then
     DISTRO=turbolinux
-  elif [ -e /etc/arch-release ]
-  then
+  elif [ -e /etc/arch-release ]; then
     DISTRO=archlinux
-  elif [ -e /etc/lsb-release ]
+  elif [ -e /etc/lsb-release ]; then
     . /etc/etc/lsb-release
 
     # Normalize distro name
     DISTRO=`echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]'`
   fi
 
-  if [ -e /etc/debian_version ]
-  then
+  if [ -e /etc/debian_version ]; then
     if [ "$DISTRO" = unknown ] || [ "$DISTRO" = debian ]; then
       if [ "$FORCE_RETAKEOVER" = yes ]; then
         DISTRO=debian
