@@ -416,7 +416,7 @@ debian_configure()
   msg "-> Setting up remaining configurations"
   dpkg --configure -a
 
-  if ! grep ' *PATH=' ~/.bash_profile &> /dev/null; then
+  if ! grep '# Begin:.*debtakeover' ~/.bash_profile &> /dev/null; then
     msg "-> Sanitizing root PATH environment variable"
     cat >> ~/.bash_profile <<-EOF
 	# Begin: automatically added by debtakeover
