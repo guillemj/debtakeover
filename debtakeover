@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.20 2003/10/28 22:38:11 guillem Exp $
+# $Id: debtakeover,v 1.21 2003/10/28 22:54:39 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -265,12 +265,16 @@ debian_configure()
 
   # TODO: Add a kernel paramater "panic=30"
 
-  echo "-> Setting up remaing configurations"
+  echo "-> Setting up remaining configurations"
   dpkg --configure -a
 
   echo "-> Setting up module configuration"
-  mv -f /etc/conf.modules /etc/modutils/$DISTRO
-  mv -f /etc/modules.conf /etc/modutils/$DISTRO
+  if [ -e /etc/conf.modules ]; then
+    cat /etc/conf.modules >> /etc/modutils/$DISTRO
+  fi
+  if [ -e /etc/modules.conf ]; then
+    cat /etc/modules.conf >> /etc/modutils/$DISTRO
+  fi
   update-modules
 }
 
@@ -298,12 +302,12 @@ distro_trash()
   echo "Stage (Trash the old system)"
   echo "-----"
 
-  cat ~/debianize-remove.list | xargs rm -f | logpipe || true
-  cat ~/debianize-remove.list | xargs rmdir -p | logpipe || true
+  cat ~/debianize-remove.list | xargs rm -f 2> /dev/null | logpipe || true
+  cat ~/debianize-remove.list | xargs rmdir -p 2> /dev/null | logpipe || true
 
   hash -r
   echo "!!! DANGER WILL ROBINSON !!!"
-  echo "reboot when done"
+  echo "reboot when done."
 #  reboot
 }
 
