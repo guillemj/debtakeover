@@ -330,7 +330,7 @@ debian_configure()
 
   msg "-> Updating device nodes"
   cd /dev
-  ./MAKEDEV update
+  MAKEDEV update
   cd -
 
   msg "-> Setting up network"
