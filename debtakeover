@@ -328,9 +328,9 @@ debian_configure()
   msg "Stage (Configuring)"
   msg "-----"
 
-  msg "-> Setting up Debian device nodes"
+  msg "-> Updating device nodes"
   cd /dev
-  ./MAKEDEV generic
+  ./MAKEDEV update
   cd -
 
   msg "-> Setting up network"
