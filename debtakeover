@@ -2,7 +2,7 @@
 #
 # debtakeover
 #
-# $Id: debtakeover,v 1.51 2003/11/07 16:37:51 guillem Exp $
+# $Id: debtakeover,v 1.52 2003/11/07 22:10:28 guillem Exp $
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
@@ -207,10 +207,8 @@ EOF
   echo ${REMOVE_EXCLUDES} | xargs -n1 > $WORKDIR/debianize-exclude.list
 
   msg "-> Generating Debian files list"
-  ( cd $DEBIAN_DIR; \
-    find . \
-      $STD_FIND_EXCLUDES \
-      -o -print ) | sed -e 's,^\.,,' | sort > $WORKDIR/debianize-debian.list
+  chroot $DEBIAN_DIR find / $STD_FIND_EXCLUDES -o -print \
+    | sort > $WORKDIR/debianize-debian.list
 
   msg "-> Packaging Debian chroot"
   ( cd $DEBIAN_DIR; \
@@ -238,9 +236,9 @@ distro_remove_list()
     -o -print | sort > $WORKDIR/debianize-$DISTRO.list
 
   msg "-> Generating distro files removal list"
-  diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list | \
-    tail +2 | grep '^-' | sed -e 's,^-,,' | \
-    grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
+  diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list \
+    | tail +2 | grep '^-' | sed -e 's,^-,,' \
+    | grep -vxf $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-remove.list
 }
 
 setup_network_redhat()
@@ -269,9 +267,11 @@ setup_network_redhat()
 
 setup_network_gentoo()
 {
+  warning "Gentoo does not have yet a network conversion script."
+
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
-    warning "Gentoo does not have yet a network conversion script."
+    :
   done
 }
 
@@ -351,10 +351,10 @@ distro_trash()
   msg "Stage (Trash the old system)"
   msg "-----"
 
-  cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null | \
-    logpipe || true
-  cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null | \
-    logpipe || true
+  cat $WORKDIR/debianize-remove.list | xargs rm -f 2> /dev/null \
+    | logpipe || true
+  cat $WORKDIR/debianize-remove.list | xargs rmdir -p 2> /dev/null \
+    | logpipe || true
 
   hash -r
 }
@@ -438,6 +438,7 @@ distro_trash
 
 # Pure Debian system
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
+log "-> $PROGRAM finished on `date -Iseconds | tr 'T' ' '`"
 
 exit 0
 
