@@ -293,7 +293,7 @@ setup_network_redhat()
     echo "iface $DEVICE inet $NET_METHOD"
     if [ "$NET_METHOD" = static ]; then
       [ -n "$IPADDR" ] && echo "  address $IPADDR"
-      [ -n "$BRADCAST" ] && echo "  broadcast $BROADCAST"
+      [ -n "$BROADCAST" ] && echo "  broadcast $BROADCAST"
       [ -n "$NETMASK" ] && echo "  netmask $NETMASK"
       [ -n "$NETWORK" ] && echo "  network $NETWORK"
       [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
