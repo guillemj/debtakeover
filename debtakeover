@@ -95,6 +95,7 @@ usage()
 	    --mirror=url	Debian mirror (default "$DEFAULT_MIRROR")
 	    --tarball=file	Debian base tarball (default "$DEFAULT_TARBALL")
 	    --force-purify	Force the purification (non-interactive)
+	    --force-retakeover	Force taking over a Debian system
 	    --verbose		Be more verbose
 	    --version		Print program version
 	    --help		Print this help
@@ -178,7 +179,11 @@ distro_detect()
   if [ -e /etc/debian_version ]
   then
     if [ "$DISTRO" = unknown ]; then
-      error 1 "You already have a Debian system"
+      if [ "$FORCE_RETAKEOVER" = yes ]; then
+        warning "Taking over a Debian system"
+      else
+        error 1 "You already have a Debian system"
+      fi
     else
       warning "You have a mixed system, trying to continue"
       DISTRO_MIXED=yes
@@ -477,6 +482,9 @@ for args do
       ;;
     --force-purify)
       FORCE_PURIFY=yes
+      ;;
+    --force-retakeover)
+      FORCE_RETAKEOVER=yes
       ;;
     --version)
       echo "$PROGRAM $VERSION"
