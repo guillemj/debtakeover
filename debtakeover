@@ -336,7 +336,6 @@ setup_network_gentoo()
 {
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
-    
     :
   done
 }
