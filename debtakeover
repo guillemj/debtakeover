@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.7 2003/09/28 00:53:51 guillem Exp $
+# $Id: debtakeover,v 1.8 2003/09/28 01:10:18 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,17 +22,20 @@
 
 if test $# = 0
 then
-  echo "usage: $0 <suite>"
+  echo "usage: $0 <options> <suite>"
   exit
 fi
 
 DEBIAN_MIRROR=http://ftp.no.debian.org
 DEBIAN_VERSION=$1
+DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
+DEBIAN_DIR=$DEBIAN_VERSION-chroot
 shift
 
 if [ "$1" = "--chroot" ]
 then
   SETUP_CHROOT=yes
+  shift
 fi
 
 ETC_EXCLUDES="mtab fstab hostname hosts resolv.conf lilo.conf modules
@@ -126,9 +129,9 @@ debian_tarball()
 
   $DEBOOTSTRAP --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
-        $DEBIAN_VERSION $DEBIAN_VERSION-tarball $DEBIAN_MIRROR/debian
+        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian
 
-  cat > $DEBIAN_VERSION-tarball/etc/apt/sources.list <<-EOF
+  cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
   deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
   deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
   deb $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
@@ -137,12 +140,12 @@ debian_tarball()
   deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
   deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
-  cp $0 $DEBIAN_VERSION-tarball/tmp/
+  cp $0 $DEBIAN_DIR/tmp/
 
-  chroot $DEBIAN_VERSION-tarball/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
-  cd $DEBIAN_VERSION-tarball
+  chroot $DEBIAN_DIR/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
+  cd $DEBIAN_DIR
 
-  tar cvjf ../$DEBIAN_VERSION-tarball.tar.bz2 *
+  tar cvf ../$DEBIAN_TARBALL.tar.bz2 --bzip2 *
 }
 
 distro_remove_list()
@@ -150,10 +153,11 @@ distro_remove_list()
   echo "Stage (Building the remove list)"
   echo "-----"
 
-  find $DEBIAN_VERSION-tarball/ \
+  ( cd $DEBIAN_DIR; \
+  find . \
     -path '/dev' -prune \
     -o -path '/proc' -prune \
-    -o -print | sed -e 's,^\.,,' | sort > debianize-debian.list
+    -o -print ) | sed -e 's,^\.,,' | sort > debianize-debian.list
   find / \
     -path '/boot' -prune \
     -o -path '/tmp' -prune \
@@ -245,7 +249,7 @@ debian_dump()
   cd /
   tar czvf ~/$DISTRO-etc.tgz /etc
   tar czvf ~/$DISTRO-log.tgz /var/log
-  tar xvf ~/$DEBIAN_VERSION-tarball.tar.bz2 --bzip2 -p -U --numeric-owner
+  tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner
   ldconfig
   hash -r
 }
