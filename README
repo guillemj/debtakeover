@@ -39,4 +39,14 @@ Current implementation can be found on:
 
 	<http://www.hadrons.org/~guillem/debian/debtakeover/>
 
+You will need deboostrap, that can be found on:
+
+	<http://packages.debian.org/debootstrap>
+
+Usage
+-----
+
+Build debootstrap, and place it on some directory excluded by debtakeover.
+Place debtakeover in the same directory. I usually put them on /root.
+Take a look at debtakeover's --help option.
 
