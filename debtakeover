@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.17 2003/10/28 21:25:56 guillem Exp $
+# $Id: debtakeover,v 1.18 2003/10/28 22:11:04 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,11 +108,7 @@ distro_detect()
   echo "Stage (Detecting current Distro)"
   echo "-----"
 
-  if [ -e /etc/debian_version ]
-  then
-    error "You already have a Debian system"
-    exit 1
-  elif [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
+  if [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
          -e /etc/SuSe-release ]
   then
     DISTRO=redhat
@@ -128,6 +124,17 @@ distro_detect()
   then
     DISTRO=cobalt
     exit 0
+  fi
+
+  if [ -e /etc/debian_version ]
+  then
+    if [ "$DISTRO" = "unknown" ]; then
+      error "You already have a Debian system"
+      exit 1
+    else
+      error "You have a mixed system, trying to continue"
+      DISTRO_MIXED=yes
+    fi
   fi
 
   echo $DISTRO
@@ -316,6 +323,8 @@ fi
 LOGFILE=$PROGRAM.log
 
 DISTRO=unknown
+DISTRO_MIXED=no
+
 DEBIAN_MIRROR=$DEFAULT_MIRROR
 DEBIAN_VERSION=$1
 DEBIAN_TARBALL=$DEBIAN_VERSION-tarball
@@ -345,9 +354,11 @@ fi
 
 # Pure non-Debian system
 distro_detect
-debian_tarball
-distro_remove_list
-debian_dump
+if [ "$DISTRO_MIXED" = "no" ]; then
+  debian_tarball
+  distro_remove_list
+  debian_dump
+fi
 # Mixed system
 debian_configure
 distro_trash
