@@ -435,6 +435,9 @@ if [ "$DISTRO_MIXED" = "no" ]; then
   debian_dump
 fi
 
+hash -r
+ldconfig
+
 # Mixed system
 
 debian_configure
