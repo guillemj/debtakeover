@@ -356,6 +356,9 @@ debian_configure()
        ! grep update-modules /etc/modules.conf &> /dev/null; then
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
+  if [ ! -f /etc/modules ]; then
+    > /etc/modules
+  fi
   update-modules force
 
   msg "-> Setting up remaining configurations"
