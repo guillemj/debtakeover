@@ -156,24 +156,23 @@ distro_detect()
          -e /etc/fedora-release ]
   then
     DISTRO=redhat
+    NETWORK_TYPE=redhat
     NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
   elif [ -e /etc/SuSE-release ]
   then
-    DISTRO=redhat
-    NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network
+    DISTRO=suse
+    NETWORK_TYPE=redhat
     # SuSE version < 8.0 used /etc/rc.config
+    NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network
   elif [ -e /etc/slackware-version ]
   then
-#    DISTRO=slackware
-    warning 3 "Slackware not supported yet."
+    DISTRO=slackware
   elif [ -e /etc/gentoo-release ]
   then
-#    DISTRO=gentoo
-    warning 3 "Gentoo not supported yet."
+    DISTRO=gentoo
   elif [ -e /etc/cobalt-release ]
   then
-#    DISTRO=cobalt
-    warning 3 "Cobalt not supported yet."
+    DISTRO=cobalt
   fi
 
   if [ -e /etc/debian_version ]
@@ -306,8 +305,6 @@ setup_network_redhat()
 
 setup_network_gentoo()
 {
-  warning "Gentoo does not have yet a network conversion script."
-
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
     
@@ -315,15 +312,15 @@ setup_network_gentoo()
   done
 }
 
-setup_network_slackware()
+setup_network_bsd()
 {
   # /etc/rc.d/rc.inet1
   :
 }
 
-setup_network_unknown()
+setup_network_none()
 {
-  warning "Unknwown distro, does not have network conversion scripts."
+  warning "Distro $DISTRO does not have yet a network conversion scripts."
 }
 
 debian_configure()
@@ -337,7 +334,7 @@ debian_configure()
   cd -
 
   msg "-> Setting up network"
-  setup_network_${DISTRO} > /etc/network/interfaces
+  setup_network_${NETWORK_TYPE} > /etc/network/interfaces
   if [ ! -f /etc/hostname ]; then
     hostname -s > /etc/hostname
   fi
@@ -498,6 +495,7 @@ LOGFILE=$WORKDIR/$PROGRAM.log
 
 DISTRO=unknown
 DISTRO_MIXED=no
+NETWORK_TYPE=none
 
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
 DEBIAN_MIRROR_SECURITY=${MIRROR_SECURITY:-$DEFAULT_MIRROR_SECURITY}
