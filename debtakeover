@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.9 2003/09/28 01:11:10 guillem Exp $
+# $Id: debtakeover,v 1.10 2003/10/26 21:52:26 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ else
   DEBOOTSTRAP_EXCLUDES=""
 fi
 
-DISTRO=none
+DISTRO=unknown
 
 setup_chroot()
 {
@@ -131,6 +131,8 @@ debian_tarball()
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian
 
+  echo "-> setting up the Debian chroot"
+
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
   deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
   deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
@@ -140,12 +142,22 @@ debian_tarball()
   deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
   deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
+
   cp $0 $DEBIAN_DIR/tmp/
-
   chroot $DEBIAN_DIR/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
-  cd $DEBIAN_DIR
 
-  tar cvf ../$DEBIAN_TARBALL.tar.bz2 --bzip2 *
+  echo "-> packaging Debian chroot"
+  ( cd $DEBIAN_DIR; tar cf ../$DEBIAN_TARBALL.tar.bz2 --bzip2 * )
+
+  echo "-> generating Debian files list"
+  ( cd $DEBIAN_DIR; \
+    find . \
+      -path '/dev' -prune \
+      -o -path '/proc' -prune \
+      -o -print ) | sed -e 's,^\.,,' | sort > debianize-debian.list
+
+  echo "-> cleaning Debian chroot"
+  rm -rf $DEBIAN_DIR
 }
 
 distro_remove_list()
@@ -153,11 +165,6 @@ distro_remove_list()
   echo "Stage (Building the remove list)"
   echo "-----"
 
-  ( cd $DEBIAN_DIR; \
-  find . \
-    -path '/dev' -prune \
-    -o -path '/proc' -prune \
-    -o -print ) | sed -e 's,^\.,,' | sort > debianize-debian.list
   find / \
     -path '/boot' -prune \
     -o -path '/tmp' -prune \
@@ -214,9 +221,9 @@ setup_network_gentoo()
   done
 }
 
-setup_network_()
+setup_network_unknown()
 {
-  echo "warning: distro $DISTRO does not have network conversion scripts."
+  echo "warning: unknwown distrodistro $DISTRO does not have network conversion scripts."
 }
 
 setup_network()
@@ -247,9 +254,14 @@ debian_dump()
   echo "-----"
 
   cd /
+
+  echo "-> making backups of important data"
   tar czvf ~/$DISTRO-etc.tgz /etc
   tar czvf ~/$DISTRO-log.tgz /var/log
+
+  echo "-> dumping Debian over $DISTRO"
   tar xvf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 -p -U --numeric-owner
+
   ldconfig
   hash -r
 }
@@ -262,7 +274,9 @@ distro_trash()
   cat ~/debianize-remove.list | xargs rm -f
   cat ~/debianize-remove.list | xargs rmdir -p
   hash -r
-#  reboot # !!! DANGER WILL ROBINSON !!!
+  echo "!!! DANGER WILL ROBINSON !!!"
+  echo "reboot when done"
+#  reboot
 }
 
 if [ "$SETUP_CHROOT" = "yes" ]; then
