@@ -4,7 +4,7 @@
 #
 # Convert a new non-Debian distribution to Debian proper
 #
-# $Id: debtakeover,v 1.11 2003/10/26 22:30:28 guillem Exp $
+# $Id: debtakeover,v 1.12 2003/10/26 23:23:52 guillem Exp $
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,19 +95,14 @@ distro_detect()
   then
     echo "You already have a Debian system"
     exit 1
+  elif [ -e /etc/redhat-release -o -e /etc/mandrake-release -o \
+         -e /etc/SuSe-release ]
+  then
+    DISTRO=redhat
   elif [ -e /etc/slackware-version ]
   then
     DISTRO=slackware
     exit 0
-  elif [ -e /etc/mandrake-release ]
-  then
-    DISTRO=redhat
-  elif [ -e /etc/redhat-release ]
-  then
-    DISTRO=redhat
-  elif [ -e /etc/SuSe-release ]
-  then
-    DISTRO=redhat
   elif [ -e /etc/gentoo-release ]
   then
     DISTRO=gentoo
@@ -131,7 +126,7 @@ debian_tarball()
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian
 
-  echo "-> setting up the Debian chroot"
+  echo "-> Setting up the Debian chroot"
 
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
   deb $DEBIAN_MIRROR/ $DEBIAN_VERSION/updates main
@@ -146,17 +141,17 @@ EOF
   cp $0 $DEBIAN_DIR/tmp/
   chroot $DEBIAN_DIR/ /tmp/`basename $0` $DEBIAN_VERSION --chroot
 
-  echo "-> packaging Debian chroot"
-  ( cd $DEBIAN_DIR; tar cf ../$DEBIAN_TARBALL.tar.bz2 --bzip2 * )
+  echo "-> Packaging Debian chroot"
+  ( cd $DEBIAN_DIR; tar cf ~/$DEBIAN_TARBALL.tar.bz2 --bzip2 * )
 
-  echo "-> generating Debian files list"
+  echo "-> Generating Debian files list"
   ( cd $DEBIAN_DIR; \
     find . \
       -path '/dev' -prune \
       -o -path '/proc' -prune \
-      -o -print ) | sed -e 's,^\.,,' | sort > debianize-debian.list
+      -o -print ) | sed -e 's,^\.,,' | sort > ~/debianize-debian.list
 
-  echo "-> cleaning Debian chroot"
+  echo "-> Cleaning Debian chroot"
   rm -rf $DEBIAN_DIR
 }
 
@@ -178,8 +173,8 @@ distro_remove_list()
     -o -path '/usr/local' -prune \
     -o -path '/lib/modules' -prune \
     -o -print | sort > ~/debianize-$DISTRO.list
-  diff -u debianize-$DISTRO.list debianize-debian.list | tail +2 | \
-    grep '^-' | sed -e 's,^-,,' > debianize-remove.list
+  diff -u ~/debianize-$DISTRO.list ~/debianize-debian.list | tail +2 | \
+    grep '^-' | sed -e 's,^-,,' > ~/debianize-remove.list
 }
 
 setup_network_redhat()
@@ -217,21 +212,20 @@ setup_network_gentoo()
 {
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
-    echo dho!
+    echo "dho!" 2>&1
   done
 }
 
 setup_network_unknown()
 {
-  echo "warning: unknwown distrodistro $DISTRO does not have network conversion scripts."
+  echo "warning: unknwown distro, don't have network conversion scripts." 2>&1
 }
 
 setup_network()
 {
-  echo "Stage (Setting up network)"
-  echo "-----"
+  echo "-> Setting up network"
 
-  setup_network_${DISTRO}
+  setup_network_${DISTRO} > /etc/network/interfaces
 }
 
 debian_configure()
@@ -239,7 +233,7 @@ debian_configure()
   echo "Stage (Configuring)"
   echo "-----"
 
-  setup_network > /etc/network/interfaces
+  setup_network
 
   passwd
 
@@ -273,6 +267,7 @@ distro_trash()
 
   cat ~/debianize-remove.list | xargs rm -f
   cat ~/debianize-remove.list | xargs rmdir -p
+
   hash -r
   echo "!!! DANGER WILL ROBINSON !!!"
   echo "reboot when done"
