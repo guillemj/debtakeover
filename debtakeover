@@ -145,19 +145,20 @@ distro_detect()
     DISTRO=redhat
   elif [ -e /etc/SuSE-release ]
   then
-    DISTRO=suse
+#    DISTRO=suse
+    warning 3 "SuSE not supported yet."
   elif [ -e /etc/slackware-version ]
   then
-    DISTRO=slackware
-    error 3 "Slackware not supported yet."
+#    DISTRO=slackware
+    warning 3 "Slackware not supported yet."
   elif [ -e /etc/gentoo-release ]
   then
-    DISTRO=gentoo
-    error 3 "Gentoo not supported yet."
+#    DISTRO=gentoo
+    warning 3 "Gentoo not supported yet."
   elif [ -e /etc/cobalt-release ]
   then
-    DISTRO=cobalt
-    error 3 "Cobalt not supported yet."
+#    DISTRO=cobalt
+    warning 3 "Cobalt not supported yet."
   fi
 
   if [ -e /etc/debian_version ]
@@ -263,11 +264,6 @@ setup_network_redhat()
     [ -n "$GATEWAY" ] && echo "  gateway $GATEWAY"
     echo
   done
-}
-
-setup_network_suse()
-{
-  warning "SuSE does not have yet a network conversion script."
 }
 
 setup_network_gentoo()
@@ -456,6 +452,7 @@ debian_configure
 distro_trash
 
 # Pure Debian system
+
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
 log "-> $PROGRAM finished on `date -Iseconds | tr 'T' ' '`"
 
