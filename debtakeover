@@ -306,7 +306,9 @@ debian_configure()
 
     if [ -h /sbin/reboot ];
     then
-      cp -f `readlink /sbin/reboot` /sbin/reboot
+      local LN_REBOOT=`readlink /sbin/reboot`
+      rm -f /sbin/reboot
+      ( cd /sbin; cp -f $LN_REBOOT reboot; )
     fi
     mv -f /sbin/halt /sbin/halt.disabled
     rm /etc/rc0.d/S??halt
@@ -324,7 +326,8 @@ debian_configure()
   if [ -f /etc/conf.modules ]; then
     cat /etc/conf.modules >> /etc/modutils/$DISTRO
   fi
-  if [ -f /etc/modules.conf ]; then
+  if [ -f /etc/modules.conf ]
+       && ! grep update-modules /etc/modules.conf &> /dev/null; then
     cat /etc/modules.conf >> /etc/modutils/$DISTRO
   fi
   update-modules force
@@ -371,7 +374,7 @@ distro_trash()
 export LC_ALL=C
 
 PROGRAM=debtakeover
-VERSION=0.2
+VERSION=0.3
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_SUITE=woody
@@ -433,10 +436,10 @@ if [ "$DISTRO_MIXED" = "no" ]; then
   debian_tarball
   distro_remove_list
   debian_dump
-fi
 
-hash -r
-ldconfig
+  hash -r
+  ldconfig
+fi
 
 # Mixed system
 
