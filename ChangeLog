@@ -1,3 +1,7 @@
+2005-04-27  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover.spec: New file.
+
 2004-12-11  Guillem Jover  <guillem@debian.org>
 
 	* debtakeover (distro_detect): Add ArkLinux, ASPLinux, AltLinux,

@@ -5,6 +5,7 @@ Version SVN
  - Detect more distros: AltLinux, ArkLinux, ArchLinux, ASPLinux, Aurox, cAos,
    Conectiva, EnGarde, LvR, LSB, MagicLinux, PLD, StartCom, Trustix, WhiteBox.
  - New option to pass extra arguments to debootstrap.
+ - Added an RPM spec file.
 
 Version 0.8
 

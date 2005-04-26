@@ -5,7 +5,7 @@ TODO list
 =========
 
  - implement other distro network setup converters.
- - create a rpm, ebuild, slackware, bsd port.
+ - create a ebuild, slackware, bsd port.
  - use buil-time variables to specify defaults on the program and manpage.
  - preserve users created in the debootstrap stage, only in newer suites.
  - fix the security server usage on suites not supporting it. add an argument
