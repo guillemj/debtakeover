@@ -1,3 +1,8 @@
+2005-07-31  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover.1: Change title header to lowercase. Correct missuse of
+	dashes to hyphens in command line arguments.
+
 2005-04-27  Guillem Jover  <guillem@debian.org>
 
 	* debtakeover.spec: New file.
