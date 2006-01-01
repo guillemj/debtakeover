@@ -6,7 +6,7 @@
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
-# Copyright (C) 2003, 2004 Guillem Jover <guillem@debian.org>
+# Copyright (C) 2003, 2004, 2006 Guillem Jover <guillem@debian.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -332,14 +332,14 @@ distro_remove_list()
   msg "-> Generating $DISTRO distro files list"
   find / \
     $STD_FIND_EXCLUDES \
-       -path '/boot' -prune \
-    -o -path '/var/run' -prune \
-    -o -path '/var/log' -prune \
-    -o -path '/var/local' -prune \
-    -o -path '/usr/local' -prune \
-    -o -path '/usr/src' -prune \
-    -o -path '/lib/modules' -prune \
-    -o -print | sort > $WORKDIR/debianize-$DISTRO.list
+    -path '/boot' -prune -o \
+    -path '/var/run' -prune -o \
+    -path '/var/log' -prune -o \
+    -path '/var/local' -prune -o \
+    -path '/usr/local' -prune -o \
+    -path '/usr/src' -prune -o \
+    -path '/lib/modules' -prune -o \
+    -print | sort > $WORKDIR/debianize-$DISTRO.list
 
   msg "-> Generating $DISTRO distro files removal list"
   diff -u $WORKDIR/debianize-$DISTRO.list $WORKDIR/debianize-debian.list \

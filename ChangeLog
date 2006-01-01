@@ -1,3 +1,7 @@
+2006-01-01  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover (distro_remove_list): Reindent find arguments.
+
 2005-07-31  Guillem Jover  <guillem@debian.org>
 
 	* debtakeover.1: Change title header to lowercase. Correct missuse of
