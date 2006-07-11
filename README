@@ -53,5 +53,5 @@ otherwise that will be checked by debtakeover.
 Place debtakeover in any excluded directory (/root) and run it from there.
 
 Take a look at debtakeover's --help option. By default it installs a stable
-suite, and uses the colo profile.
+suite (currently 'woody'), and uses the colo profile.
 
