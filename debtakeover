@@ -528,7 +528,7 @@ BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
 DEFAULT_MIRROR=http://ftp.no.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
-DEFAULT_SUITE=woody
+DEFAULT_SUITE=etch
 DEFAULT_PROFILE=colo
 DEFAULT_DEBOOTSTRAP=debootstrap
 

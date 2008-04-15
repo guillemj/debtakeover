@@ -1,3 +1,7 @@
+2008-04-15  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover (DEFAULT_SUITE): Change from woody to etch.
+
 2006-07-11  Guillem Jover  <guillem@debian.org>
 
 	* README: Point out that the current suite supported is woody.
