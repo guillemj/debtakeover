@@ -293,11 +293,9 @@ debian_tarball_build()
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
 	deb $DEBIAN_MIRROR_SECURITY/debian-security $DEBIAN_VERSION/updates main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
-	deb $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 
 	deb-src $DEBIAN_MIRROR_SECURITY/debian-security $DEBIAN_VERSION/updates main
 	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
-	deb-src $DEBIAN_MIRROR/debian-non-US $DEBIAN_VERSION/non-US main
 EOF
 
   msg "-> Generating Debian files list"

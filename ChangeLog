@@ -1,5 +1,9 @@
 2008-04-15  Guillem Jover  <guillem@debian.org>
 
+	* debtakeover (debian_tarball_build): Remove non-US repositories.
+
+2008-04-15  Guillem Jover  <guillem@debian.org>
+
 	* debtakeover.ebuild: New file.
 
 2008-04-15  Guillem Jover  <guillem@debian.org>
