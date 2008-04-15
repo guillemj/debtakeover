@@ -2,8 +2,6 @@
 #
 # debtakeover
 #
-# $Id$
-#
 #	Convert a new non-Debian distribution to Debian proper
 #
 # Copyright (C) 2003, 2004, 2006 Guillem Jover <guillem@debian.org>
