@@ -81,9 +81,9 @@ sigerror()
 usage()
 {
   cat <<HERE
-usage: $PROGRAM [options]
+Usage: $PROGRAM [options]
 
-options:
+Options:
 
     --profile=string	Installation profile (default "$DEFAULT_PROFILE")
     --suite=string	Debian suite (default "$DEFAULT_SUITE")

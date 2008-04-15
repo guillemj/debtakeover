@@ -1,5 +1,9 @@
 2008-04-15  Guillem Jover  <guillem@debian.org>
 
+	* debtakeover (usage): Properly capitalize output.
+
+2008-04-15  Guillem Jover  <guillem@debian.org>
+
 	* debtakeover (DEBOOTSTRAP_INCLUDES): Remove hardcoded list of shared
 	libraries.
 
