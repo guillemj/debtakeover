@@ -1,5 +1,9 @@
 2008-04-15  Guillem Jover  <guillem@debian.org>
 
+	* debtakeover.ebuild: New file.
+
+2008-04-15  Guillem Jover  <guillem@debian.org>
+
 	* debtakeover (DEFAULT_SUITE): Change from woody to etch.
 
 2006-07-11  Guillem Jover  <guillem@debian.org>
