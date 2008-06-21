@@ -1,3 +1,8 @@
+2008-06-21  Guillem Jover  <guillem@debian.org>
+
+	* debtakeover: Use UTF-8 copyright symbol.
+	* README: Likewise. Update copyright years.
+
 2008-04-15  Guillem Jover  <guillem@debian.org>
 
 	* debtakeover (usage): Properly capitalize output.
