@@ -26,8 +26,12 @@ DIST_FILES := \
 
 all:
 
+.PHONY: ChangeLog
+ChangeLog:
+	git log --stat -C >$@
+
 .PHONY: dist
-dist:
+dist: ChangeLog
 	mkdir $(TAR_NAME)
 	cp -a $(DIST_FILES) $(TAR_NAME)
 	tar czf $(TAR_FILE) --exclude=.gitignore $(TAR_NAME)
