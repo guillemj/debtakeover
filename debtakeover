@@ -75,8 +75,8 @@ error()
 
 sigerror()
 {
-  echo "Unexpected error, please report it with full logs to: "
-  echo "  $BUGS_ADDRESS"
+  echo "Unexpected error while executing '$BASH_COMMAND' returned $?,"
+  echo "please report it with full logs to: $BUGS_ADDRESS"
   exit 80
 }
 
