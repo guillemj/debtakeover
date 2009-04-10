@@ -653,14 +653,15 @@ setup_shell
 distro_detect
 check_needed
 
+generic_exclusion_list
+if [ "$TARBALL" ]; then
+  debian_tarball_prebuilt
+else
+  debian_tarball_build
+fi
+distro_remove_list
+
 if [ "$DISTRO_MIXED" = no ]; then
-  generic_exclusion_list
-  if [ "$TARBALL" ]; then
-    debian_tarball_prebuilt
-  else
-    debian_tarball_build
-  fi
-  distro_remove_list
   debian_dump
 fi
 
