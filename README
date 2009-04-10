@@ -1,7 +1,7 @@
 Migrating a running distro to Debian
 ====================================
 
-  Copyright © 2003, 2004, 2006, 2008 Guillem Jover <guillem@debian.org>
+  Copyright © 2003, 2004, 2006, 2008, 2009 Guillem Jover <guillem@debian.org>
   Distributed subject to the GNU General Public License, version 2.
 
 Introduction
@@ -33,9 +33,13 @@ SuSE and Gentoo. It has some provisions now to be extended to any GNU/Linux
 distribution. Next step will be to do cross-installs from for example a
 FreeBSD to a Debian GNU/kFreeBSD or a Debian GNU/Linux system.
 
-Current implementation can be found on:
+Latest released code can be found at:
 
 	<http://www.hadrons.org/~guillem/debian/debtakeover/>
+
+Latest development code can be found at:
+
+	<git://git.hadrons.org/git/debian/debtakeover.git>
 
 You will need deboostrap, that can be found on:
 
