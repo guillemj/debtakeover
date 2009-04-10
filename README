@@ -7,17 +7,16 @@ Migrating a running distro to Debian
 Introduction
 ------------
 
-This document was created to help migrating a colo server. So it has been
+This started as a document to help migrating a colo server. So it has been
 used in the real world. The previous content that could be found here, was
 non functional, only some initial notes I took when doing the process by
-hand. It has been converted since this summer into a proper scripts.
-One thing that must be understood is that the script is not going to
-convert the whole system to Debian, it will install a clean base system
-keeping some configurations, but will not map all previous installed programs
-to the Debian counterparts. It should preserve user data and backups of
-old system configuration, though. The new system is a clean Debian system,
-it's not a chroot, and no traces from the old distro should keep around,
-but backups.
+hand. It has been converted since into a proper script. One thing that must
+be understood is that the script is not going to convert the whole system
+to Debian, it will install a clean base system keeping some configurations,
+but will not map all previous installed programs to the Debian counterparts.
+It should preserve user data and backups of old system configuration, though.
+The new system is a clean Debian system, it's not a chroot, and no traces
+from the old distro will be kept around, but backups.
 
 The final intention is to create a wide framework to convert anything to
 Debian. The program is named debtakeover.
@@ -25,13 +24,10 @@ Debian. The program is named debtakeover.
 Implementation
 --------------
 
-Currently the script is in beta testing stage, I didn't want to release
-a broken program that has to do such a critical operation, although by making
-the initial draft public I did precisely this, sorry to anyone who has used
-this previous immature draft. I've tested the current script on RedHat,
-SuSE and Gentoo. It has some provisions now to be extended to any GNU/Linux
-distribution. Next step will be to do cross-installs from for example a
-FreeBSD to a Debian GNU/kFreeBSD or a Debian GNU/Linux system.
+Currently the script is in beta testing stage, be warned. It has been tested
+on RedHat, SuSE and Gentoo. It has some provisions now to be extended to any
+GNU/Linux distribution. Next step will be to do cross-installs from for
+example a FreeBSD to a Debian GNU/kFreeBSD or a Debian GNU/Linux system.
 
 Latest released code can be found at:
 
