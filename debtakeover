@@ -134,12 +134,12 @@ check_needed()
     error 4 "You need superuser privileges to run this program."
   fi
 
-  if [ -z "$TARBALL" ]; then
+  if [ -s "$DEBIAN_TARBALL" ]; then
+    local NEWPATH=$PATH
+  else
     local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar MAKEDEV"
     # MAKEDEV may be only on /dev
     local NEWPATH=$PATH:/dev
-  else
-    local NEWPATH=$PATH
   fi
   local DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
 
@@ -654,7 +654,7 @@ distro_detect
 check_needed
 
 generic_exclusion_list
-if [ "$TARBALL" ]; then
+if [ -s "$DEBIAN_TARBALL" ]; then
   debian_tarball_prebuilt
 else
   debian_tarball_build
