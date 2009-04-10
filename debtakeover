@@ -159,7 +159,7 @@ check_needed()
 
   if [ "$FORCE_PURIFY" != yes ]; then
     REPLY_CHECK="Yes I am"
-    warning "Are you sure what are you going to do ? [$REPLY_CHECK]"
+    warning "Are you sure you want to do this? [$REPLY_CHECK]"
     read
     if [ "$REPLY" != "$REPLY_CHECK" ]; then
       error 20 "Ok, you are not sure. Leaving $DISTRO distro untouched."
