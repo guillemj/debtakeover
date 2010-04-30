@@ -444,6 +444,7 @@ debian_configure()
   msg "-> Sanitizing user databases"
   update-passwd
 
+  ## FIXME: handle udev
   if [ ! -e /dev/.devfsd ]; then
     msg "-> Updating device nodes"
     cd /dev
@@ -473,9 +474,11 @@ debian_configure()
   if [ ! -f /etc/modules ]; then
     > /etc/modules
   fi
+  ## FIXME: obsolete!!
   update-modules force
 
   msg "-> Setting up remaining configurations"
+  ## FIXME: missing updates dir (and apt partial dirs)
   dpkg --configure -a
 
   if ! grep '# Begin:.*debtakeover' ~/.bash_profile &> /dev/null; then
