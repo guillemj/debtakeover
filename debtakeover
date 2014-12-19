@@ -638,7 +638,7 @@ DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
 DEBOOTSTRAP_ARGS=$USER_DEBOOTSTRAP_ARGS
 DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
 	/var/lib/apt/lists /var/cache/apt"
-DEBOOTSTRAP_INCLUDES="ssh,grub"
+DEBOOTSTRAP_INCLUDES="ssh,grub,bzip2"
 if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
 pppoe,pppoeconf"
