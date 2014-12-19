@@ -4,7 +4,7 @@
 #
 #	Convert a new non-Debian distribution to Debian proper
 #
-# Copyright © 2003, 2004, 2006, 2008, 2009 Guillem Jover <guillem@debian.org>
+# Copyright © 2003-2004,2006,2008-2010,2014 Guillem Jover <guillem@debian.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ check_needed()
     # MAKEDEV may be only on /dev
     local NEWPATH=$PATH:/dev
   fi
-  local DEBTAKEOVER_NEEDED="grep sed diff tar gzip bzip2"
+  local DEBTAKEOVER_NEEDED="grep sed diff tar gzip xz bzip2"
 
   for bin in $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
     check_print "$bin"
@@ -579,6 +579,9 @@ for arg do
 	*.tar.gz|*.tgz)
 	  TARBALL_COMPRESSOR=--gzip
 	;;
+	*.tar.xz|*.txz)
+	  TARBALL_COMPRESSOR=--xz
+	;;
 	*.tar.bz2)
 	  TARBALL_COMPRESSOR=--bzip2
 	;;
@@ -628,8 +631,8 @@ NETWORK_TYPE=none
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
 DEBIAN_MIRROR_SECURITY=${MIRROR_SECURITY:-$DEFAULT_MIRROR_SECURITY}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
-DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.bz2}
-DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---bzip2}
+DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.xz}
+DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---xz}
 DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
@@ -638,7 +641,7 @@ DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
 DEBOOTSTRAP_ARGS=$USER_DEBOOTSTRAP_ARGS
 DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
 	/var/lib/apt/lists /var/cache/apt"
-DEBOOTSTRAP_INCLUDES="ssh,grub,bzip2"
+DEBOOTSTRAP_INCLUDES="ssh,grub,xz-utils,bzip2"
 if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
 pppoe,pppoeconf"
