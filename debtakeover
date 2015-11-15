@@ -474,8 +474,6 @@ debian_configure()
   if [ ! -f /etc/modules ]; then
     > /etc/modules
   fi
-  ## FIXME: obsolete!!
-  update-modules force
 
   msg "-> Setting up remaining configurations"
   ## FIXME: missing updates dir (and apt partial dirs)
