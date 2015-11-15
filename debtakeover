@@ -456,7 +456,7 @@ debian_configure()
   msg "-> Disabling unneeded network services"
   update-inetd --multi --disable discard,daytime,time
 
-  if [ "$DEBTAKEOVER_PROFILE" = colo  ]; then
+  if [ "$DEBTAKEOVER_PROFILE" = colo ]; then
     msg "-> Setting up specific colo configurations"
     # TODO: Add a kernel paramater "panic=30"
 
@@ -640,7 +640,7 @@ DEBOOTSTRAP_ARGS=$USER_DEBOOTSTRAP_ARGS
 DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
 	/var/lib/apt/lists /var/cache/apt"
 DEBOOTSTRAP_INCLUDES="ssh,grub,xz-utils,bzip2"
-if [ "$DEBTAKEOVER_PROFILE" = "colo"  ]; then
+if [ "$DEBTAKEOVER_PROFILE" = "colo" ]; then
   DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
 pppoe,pppoeconf"
 else
