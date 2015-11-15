@@ -15,6 +15,7 @@ KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 ppc-macos ppc-od \
 RDEPEND="dev-util/debootstrap
 	 sys-devel/binutils
 	 net-misc/wget
+	 app-arch/xz-utils
 	 app-arch/bzip2"
 
 src_unpack()
