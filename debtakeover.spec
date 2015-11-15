@@ -35,4 +35,3 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Apr 27 2005 Guillem Jover <guillem@debian.org>
 - Initial spec file.
-

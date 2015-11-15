@@ -27,4 +27,3 @@ src_install()
   dodir "/root/${P}"
   cp * "${D}/root/${P}/" || die "cp failed"
 }
-

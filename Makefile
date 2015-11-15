@@ -37,4 +37,3 @@ dist: ChangeLog
 	tar czf $(TAR_FILE) --exclude=.gitignore $(TAR_NAME)
 	rm -rf $(TAR_NAME)
 	gpg -a -b $(TAR_FILE)
-

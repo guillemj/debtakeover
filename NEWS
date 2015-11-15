@@ -30,4 +30,3 @@ Version 0.8
  - Make argument parsing more robust.
  - Added a signal error handler.
  - Fix to generate a valid tarball, usable outside debtakeover scope.
-

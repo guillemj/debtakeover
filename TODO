@@ -7,4 +7,3 @@ TODO list
  - preserve users created in the debootstrap stage, only in newer suites.
  - fix the security server usage on suites not supporting it. add an argument
    to be able to specify it.
-

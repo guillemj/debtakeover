@@ -682,4 +682,3 @@ msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
 log "-> $PROGRAM finished on `date -Iseconds | tr 'T' ' '`"
 
 exit 0
-
