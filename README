@@ -31,7 +31,7 @@ example a FreeBSD to a Debian GNU/kFreeBSD or a Debian GNU/Linux system.
 
 Latest released code can be found at:
 
-	<http://www.hadrons.org/~guillem/debian/debtakeover/>
+	<https://www.hadrons.org/~guillem/debian/debtakeover/>
 
 Latest development code can be found at:
 
@@ -39,7 +39,7 @@ Latest development code can be found at:
 
 You will need deboostrap, that can be found on:
 
-	<http://packages.debian.org/debootstrap>
+	<https://packages.debian.org/debootstrap>
 
 Usage
 -----

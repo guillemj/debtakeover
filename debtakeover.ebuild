@@ -4,8 +4,8 @@
 inherit eutils
 
 DESCRIPTION="Convert a running system to Debian"
-HOMEPAGE="http://www.hadrons.org/~guillem/debian/debtakeover/"
-SRC_URI="http://archive.hadrons.org/software/debtakeover/${PN}-${PV}.tgz"
+HOMEPAGE="https://www.hadrons.org/~guillem/debian/debtakeover/"
+SRC_URI="https://archive.hadrons.org/software/debtakeover/${PN}-${PV}.tgz"
 
 LICENSE="GPL-2"
 SLOT="0"
