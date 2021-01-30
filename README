@@ -38,7 +38,7 @@ Latest released code can be found at:
 
 Latest development code can be found at:
 
-  <git://git.hadrons.org/git/debian/debtakeover.git>
+  <https://git.hadrons.org/cgit/debian/debtakeover.git>
 
 You will need deboostrap, found at:
 
