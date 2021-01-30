@@ -539,7 +539,7 @@ PROGRAM=debtakeover
 VERSION=0.8
 BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
-DEFAULT_MIRROR=http://httpredir.debian.org
+DEFAULT_MIRROR=http://deb.debian.org
 DEFAULT_MIRROR_SECURITY=http://security.debian.org
 DEFAULT_SUITE=jessie
 DEFAULT_PROFILE=colo
