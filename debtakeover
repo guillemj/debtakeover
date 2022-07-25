@@ -282,6 +282,7 @@ debian_tarball_build()
 
   msg "-> Debootstrapping"
   $DEBOOTSTRAP $DEBOOTSTRAP_ARGS \
+    --no-merged-usr \
     --include="$DEBOOTSTRAP_INCLUDES" \
     --exclude="$DEBOOTSTRAP_EXCLUDES" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
@@ -541,7 +542,7 @@ BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
 DEFAULT_MIRROR=https://deb.debian.org
 DEFAULT_MIRROR_SECURITY=https://security.debian.org
-DEFAULT_SUITE=jessie
+DEFAULT_SUITE=bullseye
 DEFAULT_PROFILE=colo
 DEFAULT_DEBOOTSTRAP=debootstrap
 
