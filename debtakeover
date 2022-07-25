@@ -128,7 +128,7 @@ check_needed()
   check_print() { msg -n "-> Checking for $* ... "; }
 
   check_print "superuser privileges"
-  if [ $(id -u) = 0 ]; then
+  if [ "$EUID" = 0 ]; then
     msg "ok."
   else
     msg "failed."
