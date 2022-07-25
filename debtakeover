@@ -128,7 +128,7 @@ check_needed()
   check_print() { msg -n "-> Checking for $@ ... "; }
 
   check_print "superuser privileges"
-  if [ `id -u` = 0 ]; then
+  if [ $(id -u) = 0 ]; then
     msg "ok."
   else
     msg "failed."
@@ -235,7 +235,7 @@ distro_detect()
     . /etc/etc/lsb-release
 
     # Normalize distro name
-    DISTRO=`echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]'`
+    DISTRO=$(echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]')
   fi
 
   if [ -e /etc/debian_version ]; then
@@ -265,7 +265,7 @@ generic_exclusion_list()
   echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} ${DISTRO_EXCLUDES} \
     | xargs -n1 > $WORKDIR/debianize-exclude.list
   sed -e 's:^/::' $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-tar-exclude.list
-  STD_FIND_EXCLUDES=`for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done`
+  STD_FIND_EXCLUDES=$(for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done)
 
   # Be extremely paranoid
   test -s $WORKDIR/debianize-exclude.list
@@ -537,7 +537,7 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 # Process command line arguments
 
 for arg do
-  arg_value=`echo $arg | sed 's/--[^= ]*=//'`
+  arg_value=$(echo $arg | sed 's/--[^= ]*=//')
   if echo $arg | grep -- '--[^= ]*=' >& /dev/null && [ -z "$arg_value" ]; then
     error 8 "Missing option value for '$arg'."
   fi
@@ -556,9 +556,9 @@ for arg do
       ;;
     --tarball=*)
       TARBALL=$arg_value
-      TARBALL_DIR=`dirname $TARBALL`
+      TARBALL_DIR=$(dirname $TARBALL)
       if [ ${TARBALL_DIR:0:1} = / ]; then
-	TARBALL=`pwd`/$TARBALL
+        TARBALL=$(pwd)/$TARBALL
       fi
       if [ ! -e $TARBALL ]; then
 	error 11 "Tarball does not exist."
@@ -639,7 +639,7 @@ fi
 
 # Impure non-Debian system
 
-log "-> $PROGRAM started on `date -Iseconds | tr 'T' ' '`"
+log "-> $PROGRAM started on $(date -Iseconds | tr 'T' ' ')"
 msg "-> Running $PROGRAM $VERSION"
 
 setup_shell
@@ -669,6 +669,6 @@ distro_trash
 debian_configure
 
 msg "Congratulations, you have now a Debian $DEBIAN_VERSION system !"
-log "-> $PROGRAM finished on `date -Iseconds | tr 'T' ' '`"
+log "-> $PROGRAM finished on $(date -Iseconds | tr 'T' ' ')"
 
 exit 0
