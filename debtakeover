@@ -232,7 +232,7 @@ distro_detect()
   elif [ -e /etc/arch-release ]; then
     DISTRO=archlinux
   elif [ -e /etc/lsb-release ]; then
-    . /etc/etc/lsb-release
+    . /etc/lsb-release
 
     # Normalize distro name
     DISTRO=$(echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]')
