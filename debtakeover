@@ -373,10 +373,12 @@ setup_network_redhat()
 
     . $f
 
-    [ "$ONBOOT" = yes -o "$STARTMODE" = onboot ] && echo "auto $DEVICE"
-    if [ "$DEVICE" = lo -o "$NAME" = loopback ]; then
+    if [ "$ONBOOT" = yes ] || [ "$STARTMODE" = onboot ]; then
+      echo "auto $DEVICE"
+    fi
+    if [ "$DEVICE" = lo ] || [ "$NAME" = loopback ]; then
       NET_METHOD=loopback
-    elif [ -z "$BOOTPROTO" -o "$BOOTPROTO" = static -o "$BOOTPROTO" = none ]; then
+    elif [ -z "$BOOTPROTO" ] ||[ "$BOOTPROTO" = static ] || [ "$BOOTPROTO" = none ]; then
       NET_METHOD=static
     else
       NET_METHOD=$BOOTPROTO
