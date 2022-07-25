@@ -135,12 +135,9 @@ check_needed()
     error 4 "You need superuser privileges to run this program."
   fi
 
-  if [ -s "$DEBIAN_TARBALL" ]; then
-    local NEWPATH=$PATH
-  else
-    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar MAKEDEV"
-    # MAKEDEV may be only on /dev
-    local NEWPATH=$PATH:/dev
+  local NEWPATH=$PATH
+  if ! [ -s "$DEBIAN_TARBALL" ]; then
+    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar"
   fi
   local DEBTAKEOVER_NEEDED="grep sed diff tar gzip xz bzip2"
 
@@ -445,15 +442,6 @@ debian_configure()
 
   msg "-> Sanitizing user databases"
   update-passwd
-
-  ## FIXME: handle udev
-  if [ ! -e /dev/.devfsd ]; then
-    msg "-> Updating device nodes"
-    cd /dev
-    ln -sf /sbin/MAKEDEV
-    ./MAKEDEV update || true
-    cd -
-  fi
 
   msg "-> Disabling unneeded network services"
   update-inetd --multi --disable discard,daytime,time
