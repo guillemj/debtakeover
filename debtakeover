@@ -51,24 +51,24 @@ logpipe()
 
 log()
 {
-  echo -e "$@" | logpipe
+  echo -e "$*" | logpipe
 }
 
 msg()
 {
-  echo -e "$@" | tee -a $LOGFILE
+  echo -e "$*" | tee -a $LOGFILE
 }
 
 warning()
 {
-  msg "warning: $@" >&2
+  msg "warning: $*" >&2
 }
 
 error()
 {
   code=$1
   shift
-  msg "error: $@" >&2
+  msg "error: $*" >&2
   if [ $code != 0 ]; then
     exit $code
   fi
@@ -125,7 +125,7 @@ check_needed()
   msg "Stage (Checking for needed components)"
   msg "-----"
 
-  check_print() { msg -n "-> Checking for $@ ... "; }
+  check_print() { msg -n "-> Checking for $* ... "; }
 
   check_print "superuser privileges"
   if [ $(id -u) = 0 ]; then
