@@ -1,0 +1,96 @@
+# debtakeover manual page - debtakeover(1)
+#
+# Copyright © 2004-2022 Guillem Jover <guillem@debian.org>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+=encoding utf8
+
+=head1 NAME
+
+debtakeover - replace in runtime a system to Debian
+
+=head1 SYNOPSIS
+
+B<debtakeover> [I<option>...]
+
+=head1 DESCRIPTION
+
+The B<debtakeover> utility is used to replace the current running system to
+Debian. Its main purpose is to be used on a colocated server, where you do not
+have physical access to the host.
+
+=head1 OPTIONS
+
+=over
+
+=item B<--profile=>I<string>
+
+Installation profile (default "I<colo>"). Set it to "I<none>" to disable.
+
+=item B<--suite=>I<string>
+
+Debian suite (default "I<bullseye>"). Right now the only supported suite is
+I<bullseye>, if you use any other suite it may break.
+
+=item B<--mirror=>I<url>
+
+Debian mirror (default "I<https://deb.debian.org/>").
+
+=item B<--tarball=>I<file>
+
+Debian base tarball to use instead of generating one with L<debootstrap(8)>.
+It supports compressed tarballs with gzip, bzip2 and compress.
+
+=item B<--debootstrap=>I<path>
+
+A B<debootstrap> compatible binary (default "I<debootstrap>").
+Other alternatives that may not work are B<cdebootstrap> and B<crosshurd>.
+
+=item B<--debootstrap-args=>I<string>
+
+Extra arguments for B<debootstrap>.
+
+=item B<--force-purify>
+
+Force the purification (non-interactive). Do not ask for confirmation.
+
+=item B<--force-retakeover>
+
+Force taking over a Debian system. Useful when converting derived Debian
+distros or to reinstall a system from scratch.
+
+=item B<--verbose>
+
+Be more verbose.
+This only affects the output to the terminal, the logs retain
+all important information.
+
+=item B<--version>
+
+Print program version.
+
+=item B<--help>
+
+Print this help.
+
+=back
+
+=head1 SEE ALSO
+
+L<debootstrap(1)>.
+
+=head1 AUTHOR
+
+Guillem Jover <guillem@debian.org>.

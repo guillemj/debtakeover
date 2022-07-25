@@ -19,6 +19,10 @@
 
 NAME := debtakeover
 VERSION := $(shell sed -n -e 's/^VERSION=//p' $(NAME))
+define DATE_REGEX
+^[^ ]* (\([^)]*\))$
+endef
+DATE := $(shell sed -n -e 's/$(DATE_REGEX)/\1/p' NEWS | head -1)
 
 TAR_NAME := $(NAME)-$(VERSION)
 TAR_FILE := $(TAR_NAME).tar.gz
@@ -33,7 +37,22 @@ DIST_FILES := \
 	TODO \
 	ChangeLog
 
+POD2MAN = pod2man
+
 all:
+
+%.1: %.pod
+	$(POD2MAN) --utf \
+		--section 1 \
+		--name "$(NAME)" \
+		--date "$(DATE)" \
+		--center "$(NAME)'s manual" \
+		--release "$(VERSION)" \
+		$< $@
+
+.PHONY: clean
+clean:
+	$(RM) *.1
 
 .PHONY: ChangeLog
 ChangeLog:
