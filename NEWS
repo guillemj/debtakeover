@@ -1,4 +1,4 @@
-Version git
+git (unreleased)
 
  - Added a ChangeLog file.
  - Fix error before ldconfig if the distro glibc is older than the Debian one.
@@ -7,7 +7,7 @@ Version git
  - New option to pass extra arguments to debootstrap.
  - Added an RPM spec file.
 
-Version 0.8
+0.8 (2004-05-09)
 
  - Added a man page.
  - Added a NEWS file.
