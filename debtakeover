@@ -556,7 +556,7 @@ for arg do
       ;;
     --tarball=*)
       TARBALL=$arg_value
-      local TARBALL_DIR=`dirname $TARBALL`
+      TARBALL_DIR=`dirname $TARBALL`
       if [ ${TARBALL_DIR:0:1} = / ]; then
 	TARBALL=`pwd`/$TARBALL
       fi
