@@ -397,6 +397,7 @@ setup_network_redhat()
 
 setup_network_gentoo()
 {
+  warning "Distro $DISTRO has incomplete network conversion support."
   cat /etc/conf.d/net | grep -v '^ *#' | while read line
   do
     :
@@ -405,6 +406,7 @@ setup_network_gentoo()
 
 setup_network_bsd()
 {
+  warning "Distro $DISTRO has incomplete network conversion support."
   # /etc/rc.d/rc.inet1
   :
 }
