@@ -342,13 +342,23 @@ debian_tarball_build()
   rm -f "${DEBIAN_DIR:?}"/var/cache/apt/{*.bin,archives/*.deb}
   rm -rf "${DEBIAN_DIR:?}"/dev
 
-  msg "-> Setting up APT sources.list"
-  cat > "${DEBIAN_DIR:?}"/etc/apt/sources.list <<-EOF
-	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
-	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
+  msg "-> Setting up APT sources"
+  cat > "${DEBIAN_DIR:?}"/etc/apt/debian.sources <<-EOF
+# Debian
+Types: deb deb-src
+URIs: $DEBIAN_MIRROR/debian
+Suites: $DEBIAN_VERSION
+Components: main
+Signed-by: /usr/share/keyrings/debian-archive-keyring.gpg
 
-	deb-src $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
-	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
+# Debian security
+Types: deb deb-src
+URIs: $DEBIAN_MIRROR/debian-security
+Suites: $DEBIAN_VERSION-security
+Components: main
+Signed-by: /usr/share/keyrings/debian-archive-keyring.gpg
+
+# vim: syn=debcontrol
 EOF
 
   msg "-> Generating Debian files list"
