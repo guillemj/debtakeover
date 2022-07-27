@@ -473,7 +473,7 @@ debian_configure()
 
   msg "-> Setting up module configurations"
   if [ ! -f /etc/modules ]; then
-    > /etc/modules
+    touch /etc/modules
   fi
 
   msg "-> Setting up remaining configurations"
