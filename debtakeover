@@ -157,7 +157,7 @@ check_needed()
   if [ "$FORCE_PURIFY" != yes ]; then
     REPLY_CHECK="Yes I am"
     warning "Are you sure you want to do this? [$REPLY_CHECK]"
-    read
+    read -r
     if [ "$REPLY" != "$REPLY_CHECK" ]; then
       error 20 "Ok, you are not sure. Leaving $DISTRO distro untouched."
     fi
@@ -397,7 +397,7 @@ setup_network_redhat()
 setup_network_gentoo()
 {
   warning "Distro $DISTRO has incomplete network conversion support."
-  cat /etc/conf.d/net | grep -v '^ *#' | while read line
+  cat /etc/conf.d/net | grep -v '^ *#' | while read -r line
   do
     :
   done
