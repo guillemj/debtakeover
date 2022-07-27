@@ -502,7 +502,7 @@ debian_dump()
   tar czvf $WORKDIR/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   msg "-> Removing symlinks to directories"
-  find / $STD_FIND_EXCLUDES -type l -xtype d -print | xargs rm -f || true
+  find / $STD_FIND_EXCLUDES -type l -xtype d -print0 | xargs -0 rm -f || true
 
   msg "-> Dumping Debian over $DISTRO distro"
   tar xvf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
