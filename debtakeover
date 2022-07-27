@@ -547,7 +547,7 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 # Process command line arguments
 
 for arg do
-  arg_value=$(echo $arg | sed 's/--[^= ]*=//')
+  arg_value="${arg//--[^= ]*=/}"
   if echo $arg | grep -- '--[^= ]*=' >& /dev/null && [ -z "$arg_value" ]; then
     error 8 "Missing option value for '$arg'."
   fi
