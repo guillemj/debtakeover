@@ -55,6 +55,7 @@ STD_EXCLUDES+=(/proc)
 STD_EXCLUDES+=(/srv)
 STD_EXCLUDES+=(/sys)
 STD_EXCLUDES+=(/gnu)
+STD_EXCLUDES+=(/nix)
 
 declare -a STD_FIND_EXCLUDES
 
