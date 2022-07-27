@@ -231,6 +231,7 @@ distro_detect()
   elif [ -e /etc/arch-release ]; then
     DISTRO=archlinux
   elif [ -e /etc/lsb-release ]; then
+    # shellcheck disable=SC1091
     . /etc/lsb-release
 
     # Normalize distro name
@@ -364,12 +365,14 @@ setup_network_debian()
 setup_network_redhat()
 {
   if [ -f /etc/sysconfig/network ]; then
+    # shellcheck disable=SC1091
     . /etc/sysconfig/network
   fi
 
   for f in $NETWORK_REDHAT_CONF_DIR/ifcfg-*; do
     unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT || true
 
+    # shellcheck disable=SC1090,SC1091
     . $f
 
     if [ "$ONBOOT" = yes ] || [ "$STARTMODE" = onboot ]; then
