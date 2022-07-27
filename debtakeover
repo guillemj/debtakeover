@@ -696,7 +696,13 @@ DEBOOTSTRAP_CHECK_DIRS+=(/var/lib/dpkg/info)
 DEBOOTSTRAP_CHECK_DIRS+=(/var/lib/apt/lists)
 DEBOOTSTRAP_CHECK_DIRS+=(/var/cache/apt)
 DEBOOTSTRAP_INCLUDES+=(ssh)
-DEBOOTSTRAP_INCLUDES+=(grub)
+if [ -d /sys/firmware/efi ]; then
+  # If UEFI looks available, default to that.
+  DEBOOTSTRAP_INCLUDES+=(grub-efi)
+else
+  # Otherwise, let the metapackage select the appropriate GRUB variant.
+  DEBOOTSTRAP_INCLUDES+=(grub2)
+fi
 DEBOOTSTRAP_INCLUDES+=(xz-utils)
 DEBOOTSTRAP_INCLUDES+=(bzip2)
 if [ "$DEBTAKEOVER_PROFILE" = "colo" ]; then
