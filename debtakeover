@@ -28,12 +28,34 @@ set -e
 # User modifiable variables
 #
 
-REMOVE_EXCLUDES="/etc/mtab /etc/fstab /etc/hostname /etc/hosts
-        /etc/resolv.conf /etc/lilo.conf /etc/modules /etc/modules.conf
-        /etc/passwd /etc/shadow /etc/group /etc/gshadow /etc/grub.conf
-        /etc/ssh/ssh_host_* /etc/network/interfaces"
+declare -a REMOVE_EXCLUDES
+REMOVE_EXCLUDES+=(/etc/mtab)
+REMOVE_EXCLUDES+=(/etc/fstab)
+REMOVE_EXCLUDES+=(/etc/hostname)
+REMOVE_EXCLUDES+=(/etc/hosts)
+REMOVE_EXCLUDES+=(/etc/resolv.conf)
+REMOVE_EXCLUDES+=(/etc/lilo.conf)
+REMOVE_EXCLUDES+=(/etc/modules)
+REMOVE_EXCLUDES+=(/etc/modules.conf)
+REMOVE_EXCLUDES+=(/etc/passwd)
+REMOVE_EXCLUDES+=(/etc/shadow)
+REMOVE_EXCLUDES+=(/etc/group)
+REMOVE_EXCLUDES+=(/etc/gshadow)
+REMOVE_EXCLUDES+=(/etc/grub.conf)
+REMOVE_EXCLUDES+=(/etc/ssh/ssh_host_*)
+REMOVE_EXCLUDES+=(/etc/network/interfaces)
 
-STD_EXCLUDES="/tmp /root /home /opt /dev /proc /srv /sys"
+declare -a STD_EXCLUDES
+STD_EXCLUDES+=(/tmp)
+STD_EXCLUDES+=(/root)
+STD_EXCLUDES+=(/home)
+STD_EXCLUDES+=(/opt)
+STD_EXCLUDES+=(/dev)
+STD_EXCLUDES+=(/proc)
+STD_EXCLUDES+=(/srv)
+STD_EXCLUDES+=(/sys)
+
+declare -a STD_FIND_EXCLUDES
 
 WORKDIR=~
 
@@ -137,12 +159,22 @@ check_needed()
   fi
 
   local NEWPATH=$PATH
+  declare -a DEBOOTSTRAP_NEEDED
   if ! [ -s "$DEBIAN_TARBALL" ]; then
-    local DEBOOTSTRAP_NEEDED="$DEBOOTSTRAP wget ar"
+    DEBOOTSTRAP_NEEDED+=("$DEBOOTSTRAP")
+    DEBOOTSTRAP_NEEDED+=(wget)
+    DEBOOTSTRAP_NEEDED+=(ar)
   fi
-  local DEBTAKEOVER_NEEDED="grep sed diff tar gzip xz bzip2"
+  declare -a DEBTAKEOVER_NEEDED
+  DEBTAKEOVER_NEEDED+=(grep)
+  DEBTAKEOVER_NEEDED+=(sed)
+  DEBTAKEOVER_NEEDED+=(diff)
+  DEBTAKEOVER_NEEDED+=(tar)
+  DEBTAKEOVER_NEEDED+=(gzip)
+  DEBTAKEOVER_NEEDED+=(xz)
+  DEBTAKEOVER_NEEDED+=(bzip2)
 
-  for bin in $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
+  for bin in "${DEBOOTSTRAP_NEEDED[@]}" "${DEBTAKEOVER_NEEDED[@]}"; do
     check_print "$bin"
     if PATH=$NEWPATH command -v $bin >& /dev/null; then
       msg "found."
@@ -264,10 +296,12 @@ generic_exclusion_list()
   msg "-----"
 
   msg "-> Generating exclusion file list"
-  echo ${REMOVE_EXCLUDES} ${STD_EXCLUDES} ${DISTRO_EXCLUDES} \
+  echo "${REMOVE_EXCLUDES[@]}" "${STD_EXCLUDES[@]}" "${DISTRO_EXCLUDES[@]}" \
     | xargs -n1 > $WORKDIR/debianize-exclude.list
   sed -e 's:^/::' $WORKDIR/debianize-exclude.list > $WORKDIR/debianize-tar-exclude.list
-  STD_FIND_EXCLUDES=$(for e in $STD_EXCLUDES; do echo "-path $e -prune -o "; done)
+  for e in "${STD_EXCLUDES[@]}"; do
+    STD_FIND_EXCLUDES+=(-path "$e" -prune -o)
+  done
 
   # Be extremely paranoid
   test -s $WORKDIR/debianize-exclude.list
@@ -283,15 +317,23 @@ debian_tarball_build()
     error 2 "Internal error: the DEBIAN_DIR variable is empty."
   fi
 
+  DEBOOTSTRAP_ARGS+=(--no-merged-usr)
+  OLD_IFS=$IFS
+  IFS=","
+  if [ "${#DEBOOTSTRAP_INCLUDES[@]}" -gt 0 ]; then
+    DEBOOTSTRAP_ARGS+=("--include=${DEBOOTSTRAP_INCLUDES[*]}")
+  fi
+  if [ "${#DEBOOTSTRAP_EXCLUDES[@]}" -gt 0 ]; then
+    DEBOOTSTRAP_ARGS+=("--exclude=${DEBOOTSTRAP_EXCLUDES[*]}")
+  fi
+  IFS=$OLD_IFS
+
   msg "-> Debootstrapping"
-  $DEBOOTSTRAP $DEBOOTSTRAP_ARGS \
-    --no-merged-usr \
-    --include="$DEBOOTSTRAP_INCLUDES" \
-    --exclude="$DEBOOTSTRAP_EXCLUDES" \
+  $DEBOOTSTRAP "${DEBOOTSTRAP_ARGS[@]}" \
         $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
 
   msg "-> Checking chroot sanity"
-  for d in $DEBOOTSTRAP_CHECK_DIRS; do
+  for d in "${DEBOOTSTRAP_CHECK_DIRS[@]}"; do
     [ -d $DEBIAN_DIR$d ] || error 2 "Bad chroot, clean, correct, and try again."
   done
 
@@ -310,7 +352,7 @@ debian_tarball_build()
 EOF
 
   msg "-> Generating Debian files list"
-  chroot $DEBIAN_DIR find / $STD_FIND_EXCLUDES -print \
+  chroot $DEBIAN_DIR find / "${STD_FIND_EXCLUDES[@]}" -print \
     | sort > $WORKDIR/debianize-debian.list
 
   # Be extremely paranoid
@@ -344,7 +386,7 @@ distro_remove_list()
 
   msg "-> Generating $DISTRO distro files list"
   find / \
-    $STD_FIND_EXCLUDES \
+    "${STD_FIND_EXCLUDES[@]}" \
     -path '/boot' -prune -o \
     -path '/var/run' -prune -o \
     -path '/var/log' -prune -o \
@@ -507,7 +549,7 @@ debian_dump()
   tar czvf $WORKDIR/$DISTRO-log.tgz /var/log 2>&1 | logpipe
 
   msg "-> Removing symlinks to directories"
-  find / $STD_FIND_EXCLUDES -type l -xtype d -print0 | xargs -0 rm -f || true
+  find / "${STD_FIND_EXCLUDES[@]}" -type l -xtype d -print0 | xargs -0 rm -f || true
 
   msg "-> Dumping Debian over $DISTRO distro"
   tar xvf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
@@ -600,7 +642,7 @@ for arg do
       USER_DEBOOTSTRAP=$arg_value
       ;;
     --debootstrap-args=*)
-      USER_DEBOOTSTRAP_ARGS=$arg_value
+      mapfile -t USER_DEBOOTSTRAP_ARGS <<<"$arg_value"
       ;;
     --force-purify)
       FORCE_PURIFY=yes
@@ -639,16 +681,33 @@ DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
 
 DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
 
+declare -a DEBOOTSTRAP_ARGS
+declare -a DEBOOTSTRAP_CHECK_DIRS
+declare -a DEBOOTSTRAP_INCLUDES
+declare -a DEBOOTSTRAP_EXCLUDES
+
 DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
-DEBOOTSTRAP_ARGS=$USER_DEBOOTSTRAP_ARGS
-DEBOOTSTRAP_CHECK_DIRS="/etc/apt /bin /sbin /dev /var/lib/dpkg/info \
-	/var/lib/apt/lists /var/cache/apt"
-DEBOOTSTRAP_INCLUDES="ssh,grub,xz-utils,bzip2"
+DEBOOTSTRAP_ARGS=("${USER_DEBOOTSTRAP_ARGS[@]}")
+DEBOOTSTRAP_CHECK_DIRS+=(/etc/apt)
+DEBOOTSTRAP_CHECK_DIRS+=(/bin)
+DEBOOTSTRAP_CHECK_DIRS+=(/sbin)
+DEBOOTSTRAP_CHECK_DIRS+=(/dev)
+DEBOOTSTRAP_CHECK_DIRS+=(/var/lib/dpkg/info)
+DEBOOTSTRAP_CHECK_DIRS+=(/var/lib/apt/lists)
+DEBOOTSTRAP_CHECK_DIRS+=(/var/cache/apt)
+DEBOOTSTRAP_INCLUDES+=(ssh)
+DEBOOTSTRAP_INCLUDES+=(grub)
+DEBOOTSTRAP_INCLUDES+=(xz-utils)
+DEBOOTSTRAP_INCLUDES+=(bzip2)
 if [ "$DEBTAKEOVER_PROFILE" = "colo" ]; then
-  DEBOOTSTRAP_EXCLUDES="setserial,fdutils,ipchains,pcmcia-cs,ppp,pppconfig,\
-pppoe,pppoeconf"
-else
-  DEBOOTSTRAP_EXCLUDES=""
+  DEBOOTSTRAP_EXCLUDES+=(setserial)
+  DEBOOTSTRAP_EXCLUDES+=(fdutils)
+  DEBOOTSTRAP_EXCLUDES+=(ipchains)
+  DEBOOTSTRAP_EXCLUDES+=(pcmcia-cs)
+  DEBOOTSTRAP_EXCLUDES+=(ppp)
+  DEBOOTSTRAP_EXCLUDES+=(pppconfig)
+  DEBOOTSTRAP_EXCLUDES+=(pppoe)
+  DEBOOTSTRAP_EXCLUDES+=(pppoeconf)
 fi
 
 # Impure non-Debian system
