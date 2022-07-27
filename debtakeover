@@ -717,16 +717,6 @@ else
 fi
 DEBOOTSTRAP_INCLUDES+=(xz-utils)
 DEBOOTSTRAP_INCLUDES+=(bzip2)
-if [ "$DEBTAKEOVER_PROFILE" = "colo" ]; then
-  DEBOOTSTRAP_EXCLUDES+=(setserial)
-  DEBOOTSTRAP_EXCLUDES+=(fdutils)
-  DEBOOTSTRAP_EXCLUDES+=(ipchains)
-  DEBOOTSTRAP_EXCLUDES+=(pcmcia-cs)
-  DEBOOTSTRAP_EXCLUDES+=(ppp)
-  DEBOOTSTRAP_EXCLUDES+=(pppconfig)
-  DEBOOTSTRAP_EXCLUDES+=(pppoe)
-  DEBOOTSTRAP_EXCLUDES+=(pppoeconf)
-fi
 
 # Impure non-Debian system
 
