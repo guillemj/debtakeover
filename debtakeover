@@ -406,6 +406,9 @@ setup_network_redhat()
 setup_network_gentoo()
 {
   warning "Distro $DISTRO has incomplete network conversion support."
+  local line
+
+  # shellcheck disable=SC2034
   cat /etc/conf.d/net | grep -v '^ *#' | while read -r line
   do
     :
