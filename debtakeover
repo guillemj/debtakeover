@@ -66,9 +66,9 @@ WORKDIR=~
 logpipe()
 {
   if [ "$VERBOSE" = "yes" ]; then
-    tee -a $LOGFILE
+    tee -a "$LOGFILE"
   else
-    cat >> $LOGFILE
+    cat >> "$LOGFILE"
   fi
 }
 
@@ -79,7 +79,7 @@ log()
 
 msg()
 {
-  echo -e "$@" | tee -a $LOGFILE
+  echo -e "$@" | tee -a "$LOGFILE"
 }
 
 warning()
@@ -89,11 +89,11 @@ warning()
 
 error()
 {
-  code=$1
+  code="$1"
   shift
   msg "error: $*" >&2
-  if [ $code != 0 ]; then
-    exit $code
+  if [ "$code" != 0 ]; then
+    exit "$code"
   fi
 }
 
@@ -176,7 +176,7 @@ check_needed()
 
   for bin in "${DEBOOTSTRAP_NEEDED[@]}" "${DEBTAKEOVER_NEEDED[@]}"; do
     check_print "$bin"
-    if PATH=$NEWPATH command -v $bin >& /dev/null; then
+    if PATH=$NEWPATH command -v "$bin" >& /dev/null; then
       msg "found."
     else
       msg "missing."
@@ -269,7 +269,7 @@ distro_detect()
     . /etc/lsb-release
 
     # Normalize distro name
-    DISTRO=$(echo $DISTRIB_ID | tr '[:upper:]' '[:lower:]')
+    DISTRO=$(echo "$DISTRIB_ID" | tr '[:upper:]' '[:lower:]')
   fi
 
   if [ -e /etc/debian_version ]; then
@@ -330,20 +330,20 @@ debian_tarball_build()
 
   msg "-> Debootstrapping"
   $DEBOOTSTRAP "${DEBOOTSTRAP_ARGS[@]}" \
-        $DEBIAN_VERSION $DEBIAN_DIR $DEBIAN_MIRROR/debian 2>&1 | logpipe
+        "$DEBIAN_VERSION" "$DEBIAN_DIR" "$DEBIAN_MIRROR/debian" 2>&1 | logpipe
 
   msg "-> Checking chroot sanity"
   for d in "${DEBOOTSTRAP_CHECK_DIRS[@]}"; do
-    [ -d $DEBIAN_DIR$d ] || error 2 "Bad chroot, clean, correct, and try again."
+    [ -d "$DEBIAN_DIR$d" ] || error 2 "Bad chroot, clean, correct, and try again."
   done
 
   msg "-> Removing unneeded files"
-  rm -f ${DEBIAN_DIR:?}/var/lib/apt/lists/*_{Sources,Packages,Release}
-  rm -f ${DEBIAN_DIR:?}/var/cache/apt/{*.bin,archives/*.deb}
-  rm -rf ${DEBIAN_DIR:?}/dev
+  rm -f "${DEBIAN_DIR:?}"/var/lib/apt/lists/*_{Sources,Packages,Release}
+  rm -f "${DEBIAN_DIR:?}"/var/cache/apt/{*.bin,archives/*.deb}
+  rm -rf "${DEBIAN_DIR:?}"/dev
 
   msg "-> Setting up APT sources.list"
-  cat > ${DEBIAN_DIR:?}/etc/apt/sources.list <<-EOF
+  cat > "${DEBIAN_DIR:?}"/etc/apt/sources.list <<-EOF
 	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 
@@ -352,18 +352,18 @@ debian_tarball_build()
 EOF
 
   msg "-> Generating Debian files list"
-  chroot $DEBIAN_DIR find / "${STD_FIND_EXCLUDES[@]}" -print \
+  chroot "$DEBIAN_DIR" find / "${STD_FIND_EXCLUDES[@]}" -print \
     | sort > $WORKDIR/debianize-debian.list
 
   # Be extremely paranoid
   test -s $WORKDIR/debianize-debian.list
 
   msg "-> Packaging Debian chroot"
-  ( cd $DEBIAN_DIR; \
-    tar cf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR -- * )
+  ( cd "$DEBIAN_DIR"; \
+    tar cf "$DEBIAN_TARBALL" "$DEBIAN_TARBALL_COMPRESSOR" -- * )
 
   msg "-> Cleaning Debian chroot"
-  rm -rf ${DEBIAN_DIR:?}
+  rm -rf "${DEBIAN_DIR:?}"
 }
 
 debian_tarball_prebuilt()
@@ -372,7 +372,7 @@ debian_tarball_prebuilt()
   msg "-----"
 
   msg "-> Generating Debian files list from pre-built tarball"
-  tar tf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR \
+  tar tf "$DEBIAN_TARBALL" "$DEBIAN_TARBALL_COMPRESSOR" \
     | sort | sed -e 's,^,/,' > $WORKDIR/debianize-debian.list
 
   # Be extremely paranoid
@@ -417,11 +417,11 @@ setup_network_redhat()
     . /etc/sysconfig/network
   fi
 
-  for f in $NETWORK_REDHAT_CONF_DIR/ifcfg-*; do
+  for f in "$NETWORK_REDHAT_CONF_DIR"/ifcfg-*; do
     unset DEVICE BROADCAST BOOTPROTO IPADDR NETMASK NETWORK ONBOOT || true
 
     # shellcheck disable=SC1090,SC1091
-    . $f
+    . "$f"
 
     if [ "$ONBOOT" = yes ] || [ "$STARTMODE" = onboot ]; then
       echo "auto $DEVICE"
@@ -552,7 +552,7 @@ debian_dump()
   find / "${STD_FIND_EXCLUDES[@]}" -type l -xtype d -print0 | xargs -0 rm -f || true
 
   msg "-> Dumping Debian over $DISTRO distro"
-  tar xvf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR --numeric-owner \
+  tar xvf "$DEBIAN_TARBALL" "$DEBIAN_TARBALL_COMPRESSOR" --numeric-owner \
     -p -U -X $WORKDIR/debianize-tar-exclude.list 2>&1 | logpipe || true
   ldconfig
   msg "-> Linker configuration regenerating"
@@ -595,7 +595,7 @@ DEFAULT_DEBOOTSTRAP=debootstrap
 
 for arg do
   arg_value="${arg//--[^= ]*=/}"
-  if echo $arg | grep -- '--[^= ]*=' >& /dev/null && [ -z "$arg_value" ]; then
+  if echo "$arg" | grep -- '--[^= ]*=' >& /dev/null && [ -z "$arg_value" ]; then
     error 8 "Missing option value for '$arg'."
   fi
   case $arg in
@@ -613,14 +613,14 @@ for arg do
       ;;
     --tarball=*)
       TARBALL=$arg_value
-      TARBALL_DIR=$(dirname $TARBALL)
-      if [ ${TARBALL_DIR:0:1} = / ]; then
-        TARBALL=$(pwd)/$TARBALL
+      TARBALL_DIR="$(dirname "$TARBALL")"
+      if [ "${TARBALL_DIR:0:1}" = / ]; then
+        TARBALL="$(pwd)/$TARBALL"
       fi
-      if [ ! -e $TARBALL ]; then
+      if [ ! -e "$TARBALL" ]; then
 	error 11 "Tarball does not exist."
       fi
-      case $TARBALL in
+      case "$TARBALL" in
 	*.tar.gz|*.tgz)
 	  TARBALL_COMPRESSOR=--gzip
 	;;
@@ -673,20 +673,20 @@ DISTRO=unknown
 DISTRO_MIXED=no
 NETWORK_TYPE=none
 
-DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
-DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
-DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.xz}
-DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---xz}
-DEBIAN_DIR=debian-$DEBIAN_VERSION-chroot
+DEBIAN_MIRROR="${MIRROR:-$DEFAULT_MIRROR}"
+DEBIAN_VERSION="${SUITE:-$DEFAULT_SUITE}"
+DEBIAN_TARBALL="${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.xz}"
+DEBIAN_TARBALL_COMPRESSOR="${TARBALL_COMPRESSOR:---xz}"
+DEBIAN_DIR="debian-$DEBIAN_VERSION-chroot"
 
-DEBTAKEOVER_PROFILE=${PROFILE:-$DEFAULT_PROFILE}
+DEBTAKEOVER_PROFILE="${PROFILE:-$DEFAULT_PROFILE}"
 
 declare -a DEBOOTSTRAP_ARGS
 declare -a DEBOOTSTRAP_CHECK_DIRS
 declare -a DEBOOTSTRAP_INCLUDES
 declare -a DEBOOTSTRAP_EXCLUDES
 
-DEBOOTSTRAP=${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}
+DEBOOTSTRAP="${USER_DEBOOTSTRAP:-$DEFAULT_DEBOOTSTRAP}"
 DEBOOTSTRAP_ARGS=("${USER_DEBOOTSTRAP_ARGS[@]}")
 DEBOOTSTRAP_CHECK_DIRS+=(/etc/apt)
 DEBOOTSTRAP_CHECK_DIRS+=(/bin)
