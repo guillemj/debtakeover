@@ -277,6 +277,10 @@ debian_tarball_build()
   msg "Stage (Building the base-tarball)"
   msg "-----"
 
+  if [ -z "$DEBIAN_DIR" ]; then
+    error 2 "Internal error: the DEBIAN_DIR variable is empty."
+  fi
+
   msg "-> Debootstrapping"
   $DEBOOTSTRAP $DEBOOTSTRAP_ARGS \
     --no-merged-usr \
@@ -290,12 +294,12 @@ debian_tarball_build()
   done
 
   msg "-> Removing unneeded files"
-  rm -f $DEBIAN_DIR/var/lib/apt/lists/*_{Sources,Packages,Release}
-  rm -f $DEBIAN_DIR/var/cache/apt/{*.bin,archives/*.deb}
-  rm -rf $DEBIAN_DIR/dev
+  rm -f ${DEBIAN_DIR:?}/var/lib/apt/lists/*_{Sources,Packages,Release}
+  rm -f ${DEBIAN_DIR:?}/var/cache/apt/{*.bin,archives/*.deb}
+  rm -rf ${DEBIAN_DIR:?}/dev
 
   msg "-> Setting up APT sources.list"
-  cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
+  cat > ${DEBIAN_DIR:?}/etc/apt/sources.list <<-EOF
 	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 
@@ -315,7 +319,7 @@ EOF
     tar cf $DEBIAN_TARBALL $DEBIAN_TARBALL_COMPRESSOR -- * )
 
   msg "-> Cleaning Debian chroot"
-  rm -rf $DEBIAN_DIR
+  rm -rf ${DEBIAN_DIR:?}
 }
 
 debian_tarball_prebuilt()
