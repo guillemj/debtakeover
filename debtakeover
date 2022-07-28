@@ -540,9 +540,11 @@ debian_configure()
         < /etc/default/rcS > /tmp/rcS && mv -f /tmp/rcS /etc/default/
     fi
 
-    msg "-> Converting halt to behave as reboot"
-    rm -f /etc/rc0.d/S??halt
-    cp -fd /etc/rc6.d/S??reboot /etc/rc0.d
+    if [ -e /etc/rc0.d/S??halt ] && [ -e /etc/rc6.d/S??reboot ]; then
+      msg "-> Converting halt to behave as reboot"
+      rm -f /etc/rc0.d/S??halt
+      cp -fd /etc/rc6.d/S??reboot /etc/rc0.d
+    fi
   fi
 
   msg "-> Setting up module configurations"
