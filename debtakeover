@@ -145,6 +145,13 @@ setup_shell()
   fi
 }
 
+has_prog()
+{
+  local prog="$1"
+
+  command -v "$prog" >& /dev/null
+}
+
 check_needed()
 {
   msg "Stage (Checking for needed components)"
@@ -178,7 +185,7 @@ check_needed()
 
   for bin in "${DEBOOTSTRAP_NEEDED[@]}" "${DEBTAKEOVER_NEEDED[@]}"; do
     check_print "$bin"
-    if PATH=$NEWPATH command -v "$bin" >& /dev/null; then
+    if PATH=$NEWPATH has_prog "$bin"; then
       msg "found."
     else
       msg "missing."
