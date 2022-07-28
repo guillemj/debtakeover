@@ -523,8 +523,10 @@ debian_configure()
   msg "-> Sanitizing user databases"
   update-passwd
 
-  msg "-> Disabling unneeded network services"
-  update-inetd --multi --disable discard,daytime,time
+  if has_prog update-inetd; then
+    msg "-> Disabling unneeded network services"
+    update-inetd --multi --disable discard,daytime,time
+  fi
 
   if [ "$DEBTAKEOVER_PROFILE" = colo ]; then
     msg "-> Setting up specific colo configurations"
