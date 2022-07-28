@@ -8,7 +8,7 @@ Packager: Guillem Jover <guillem@debian.org>
 Vendor: Hadrons.org
 URL: https://www.hadrons.org/~guillem/debian/debtakeover
 Source: %{name}-%{version}.tgz
-Requires: debootstrap, binutils, wget, gzip, xz, bzip2
+Requires: debootstrap, wget, gzip, xz, bzip2
 Provides: debian
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-root
