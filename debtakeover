@@ -219,7 +219,9 @@ distro_detect()
   # Set default redhat style network conf dir.
   NETWORK_REDHAT_CONF_DIR=/etc/sysconfig/network-scripts
 
-  if [ -e /etc/ark-release ]; then
+  if [ -e /etc/alpine-release ]; then
+    DISTRO=alpine
+  elif [ -e /etc/ark-release ]; then
     # Provides mandrake and redhat release files
     DISTRO=arklinux
   elif [ -e /etc/altlinux-release ]; then
