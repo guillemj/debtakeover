@@ -172,7 +172,11 @@ check_needed()
   if ! [ -s "$DEBIAN_TARBALL" ]; then
     DEBOOTSTRAP_NEEDED+=("$DEBOOTSTRAP")
     DEBOOTSTRAP_NEEDED+=(wget)
-    DEBOOTSTRAP_NEEDED+=(ar)
+    if has_prog dpkg-deb; then
+      DEBOOTSTRAP_NEEDED+=(dpkg-deb)
+    else
+      DEBOOTSTRAP_NEEDED+=(ar)
+    fi
   fi
   declare -a DEBTAKEOVER_NEEDED
   DEBTAKEOVER_NEEDED+=(grep)
