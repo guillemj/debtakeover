@@ -50,6 +50,10 @@ all:
 		--release "$(VERSION)" \
 		$< $@
 
+.PHONY: check
+check:
+	shellcheck debtakeover
+
 .PHONY: clean
 clean:
 	$(RM) *.1
