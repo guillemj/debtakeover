@@ -295,10 +295,10 @@ debian_tarball_build()
 
   msg "-> Setting up APT sources.list"
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
-	deb $DEBIAN_MIRROR_SECURITY/debian-security $DEBIAN_VERSION/updates main
+	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION/updates main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 
-	deb-src $DEBIAN_MIRROR_SECURITY/debian-security $DEBIAN_VERSION/updates main
+	deb-src $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION/updates main
 	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 EOF
 
@@ -533,7 +533,6 @@ VERSION=0.8
 BUGS_ADDRESS="Guillem Jover <guillem@debian.org>"
 
 DEFAULT_MIRROR=https://deb.debian.org
-DEFAULT_MIRROR_SECURITY=https://security.debian.org
 DEFAULT_SUITE=bullseye
 DEFAULT_PROFILE=colo
 DEFAULT_DEBOOTSTRAP=debootstrap
@@ -621,7 +620,6 @@ DISTRO_MIXED=no
 NETWORK_TYPE=none
 
 DEBIAN_MIRROR=${MIRROR:-$DEFAULT_MIRROR}
-DEBIAN_MIRROR_SECURITY=${MIRROR_SECURITY:-$DEFAULT_MIRROR_SECURITY}
 DEBIAN_VERSION=${SUITE:-$DEFAULT_SUITE}
 DEBIAN_TARBALL=${TARBALL:-$WORKDIR/debian-$DEBIAN_VERSION.tar.xz}
 DEBIAN_TARBALL_COMPRESSOR=${TARBALL_COMPRESSOR:---xz}
