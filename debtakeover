@@ -282,7 +282,7 @@ distro_detect()
     . /etc/lsb-release
 
     # Normalize distro name
-    DISTRO=$(echo "$DISTRIB_ID" | tr '[:upper:]' '[:lower:]')
+    DISTRO="${DISTRIB_ID,,[A-Z]}"
   fi
 
   if [ -e /etc/debian_version ]; then
