@@ -50,12 +50,12 @@ logpipe()
 
 log()
 {
-  echo -e "$*" | logpipe
+  echo -e "$@" | logpipe
 }
 
 msg()
 {
-  echo -e "$*" | tee -a $LOGFILE
+  echo -e "$@" | tee -a $LOGFILE
 }
 
 warning()
