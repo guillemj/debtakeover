@@ -142,7 +142,7 @@ check_needed()
 
   for bin in $DEBOOTSTRAP_NEEDED $DEBTAKEOVER_NEEDED; do
     check_print "$bin"
-    if PATH=$NEWPATH which $bin >& /dev/null; then
+    if PATH=$NEWPATH command -v $bin >& /dev/null; then
       msg "found."
     else
       msg "missing."
