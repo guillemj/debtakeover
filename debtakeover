@@ -295,10 +295,10 @@ debian_tarball_build()
 
   msg "-> Setting up APT sources.list"
   cat > $DEBIAN_DIR/etc/apt/sources.list <<-EOF
-	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION/updates main
+	deb $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
 	deb $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 
-	deb-src $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION/updates main
+	deb-src $DEBIAN_MIRROR/debian-security $DEBIAN_VERSION-security main
 	deb-src $DEBIAN_MIRROR/debian $DEBIAN_VERSION main
 EOF
 
