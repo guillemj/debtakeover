@@ -282,11 +282,13 @@ distro_detect()
   elif [ -e /etc/arch-release ]; then
     DISTRO=archlinux
   elif [ -e /etc/lsb-release ]; then
-    # shellcheck disable=SC1091
-    . /etc/lsb-release
+    DISTRO=$(
+      # shellcheck disable=SC1091
+      . /etc/lsb-release
 
-    # Normalize distro name
-    DISTRO="${DISTRIB_ID,,[A-Z]}"
+      # Normalize distro name
+      echo "${DISTRIB_ID,,[A-Z]}"
+    )
   fi
 
   if [ -e /etc/debian_version ]; then
