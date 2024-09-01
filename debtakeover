@@ -101,6 +101,7 @@ error()
   fi
 }
 
+# shellcheck disable=SC2317
 sigerror()
 {
   msg "Unexpected error while executing '$BASH_COMMAND' returned $?," >&2
@@ -441,11 +442,13 @@ distro_remove_list()
     | grep -vxf "$WORKDIR/debianize-exclude.list" > "$WORKDIR/debianize-remove.list"
 }
 
+# shellcheck disable=SC2317
 setup_network_debian()
 {
   msg "-> Keeping Debian network config" >&2
 }
 
+# shellcheck disable=SC2317
 setup_network_redhat()
 {
   if [ -f /etc/sysconfig/network ]; then
@@ -481,6 +484,7 @@ setup_network_redhat()
   done
 }
 
+# shellcheck disable=SC2317
 setup_network_gentoo()
 {
   warning "Distro $DISTRO has incomplete network conversion support."
@@ -493,6 +497,7 @@ setup_network_gentoo()
   done
 }
 
+# shellcheck disable=SC2317
 setup_network_bsd()
 {
   warning "Distro $DISTRO has incomplete network conversion support."
@@ -500,6 +505,7 @@ setup_network_bsd()
   :
 }
 
+# shellcheck disable=SC2317
 setup_network_none()
 {
   warning "Distro $DISTRO does not have yet a network conversion scripts."
