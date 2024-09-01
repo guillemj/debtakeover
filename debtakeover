@@ -289,6 +289,13 @@ distro_detect()
       # Normalize distro name
       echo "${DISTRIB_ID,,[A-Z]}"
     )
+  elif [ -e /etc/os-release ]; then
+    DISTRO=$(
+      # shellcheck disable=SC1091
+      . /etc/os-release
+
+      echo "$ID"
+    )
   fi
 
   if [ -e /etc/debian_version ]; then
